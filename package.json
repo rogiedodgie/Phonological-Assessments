@@ -1,5 +1,6 @@
 {
-  "name": "Discourse",
+  "name": "Phonological-Assessments",
+  "productName": "Phonological Assessments", 
   "version": "1.0.0",
   "description": "",
   "main": "app.js",

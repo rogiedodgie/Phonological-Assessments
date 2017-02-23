@@ -55,7 +55,8 @@ function createWindow () {
         const notification = notifier.notify(app.getName(), {
           message: "Your screen is dim.",
           buttons: ['Illuminate', 'Cancel'],
-          duration: 20000
+          duration: 20000,
+          icon: path.join(__dirname, 'icon.png')
         })
         notification.on('buttonClicked', (text) => {
           console.log(text)
@@ -88,7 +89,8 @@ function createWindow () {
         const notification = notifier.notify(app.getName(), {
           message: "Your volume is a little low.",
           buttons: ['Make louder!', 'Cancel'],
-          duration: 20000
+          duration: 20000,
+          icon: path.join(__dirname, 'icon.png')
         })
         notification.on('buttonClicked', (text) => {
           console.log(text)

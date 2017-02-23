@@ -45,6 +45,8 @@ var palpa14TimeoutTime = 1000*10 // 10 seconds
 var palpa15TimeoutTime = 1000*10 // 10 seconds
 var palpa16TimeoutTime = 1000*10 // 10 seconds
 var palpa17TimeoutTime = 1000*10 // 10 seconds
+var imgTimeoutID
+var imgDurationMS = 1000*2 // 2 seconds
 exp.getRootPath()
 exp.getMediaPath()
 var palpa1MediaPath = path.resolve(exp.mediapath, 'palpa1', 'media')
@@ -61,11 +63,22 @@ var palpa14StimList = fs.readdirSync(palpa14MediaPath).sort(naturalSort())
 var palpa15StimList = fs.readdirSync(palpa15MediaPath).sort(naturalSort())
 var palpa16StimList = fs.readdirSync(palpa16MediaPath).sort(naturalSort())
 var palpa17StimList = fs.readdirSync(palpa17MediaPath).sort(naturalSort())
-// var maxNumCinderellaImgs = cinderellaImgs.length
-// var cinderellaImgIdx = 0
-// var cinderellaStartHasBeenClicked = false
-// var cinderellaRecordingHasStarted = false
+var palpa1Trials = readCSV(path.resolve(exp.mediapath, 'palpa1', 'palpa1stim.csv'))
+var palpa2Trials = readCSV(path.resolve(exp.mediapath, 'palpa2', 'palpa2stim.csv'))
+var palpa8Trials = readCSV(path.resolve(exp.mediapath, 'palpa8', 'palpa8stim.csv'))
+var palpa14Trials = readCSV(path.resolve(exp.mediapath, 'palpa14', 'palpa14stim.csv'))
+var palpa15Trials = readCSV(path.resolve(exp.mediapath, 'palpa15', 'palpa15stim.csv'))
+var palpa16Trials = readCSV(path.resolve(exp.mediapath, 'palpa16', 'palpa16stim.csv'))
+var palpa17Trials = readCSV(path.resolve(exp.mediapath, 'palpa17', 'palpa17stim.csv'))
+var maxNumberOfPalpa1Trials = palpa1Trials.length
+var maxNumberOfPalpa2Trials = palpa2Trials.length
+var maxNumberOfPalpa8Trials = palpa8Trials.length
+var maxNumberOfPalpa14Trials = palpa14Trials.length
+var maxNumberOfPalpa15Trials = palpa15Trials.length
+var maxNumberOfPalpa16Trials = palpa16Trials.length
+var maxNumberOfPalpa17Trials = palpa17Trials.length
 var assessment = ''
+var trialNumber = 1
 lowLag.init(); // init audio functions
 //console.log(cinderellaImgs)
 
@@ -290,7 +303,7 @@ function clearScreen() {
 
 
 // show text instructions on screen
-function showBrokenWindowInstructions(txt) {
+function showPalpa1Instructions(txt) {
   clearScreen()
   rec.startRec()
   var textDiv = document.createElement("div")
@@ -304,7 +317,7 @@ function showBrokenWindowInstructions(txt) {
   var startBtn = document.createElement("button")
   var startBtnTxt = document.createTextNode("Start")
   startBtn.appendChild(startBtnTxt)
-  startBtn.onclick = showBrokenWindowImg
+  startBtn.onclick = []
   btnDiv.appendChild(startBtn)
   content.appendChild(textDiv)
   content.appendChild(lineBreak)
@@ -314,7 +327,8 @@ function showBrokenWindowInstructions(txt) {
 
 
 
-function showPicnicSceneInstructions(txt) {
+// show text instructions on screen
+function showPalpa2Instructions(txt) {
   clearScreen()
   rec.startRec()
   var textDiv = document.createElement("div")
@@ -328,7 +342,7 @@ function showPicnicSceneInstructions(txt) {
   var startBtn = document.createElement("button")
   var startBtnTxt = document.createTextNode("Start")
   startBtn.appendChild(startBtnTxt)
-  startBtn.onclick = showPicnicSceneImg
+  startBtn.onclick = []
   btnDiv.appendChild(startBtn)
   content.appendChild(textDiv)
   content.appendChild(lineBreak)
@@ -338,7 +352,8 @@ function showPicnicSceneInstructions(txt) {
 
 
 
-function showPbjInstructions(txt) {
+// show text instructions on screen
+function showPalpa8Instructions(txt) {
   clearScreen()
   rec.startRec()
   var textDiv = document.createElement("div")
@@ -352,7 +367,7 @@ function showPbjInstructions(txt) {
   var startBtn = document.createElement("button")
   var startBtnTxt = document.createTextNode("Start")
   startBtn.appendChild(startBtnTxt)
-  startBtn.onclick = showPbjImg
+  startBtn.onclick = []
   btnDiv.appendChild(startBtn)
   content.appendChild(textDiv)
   content.appendChild(lineBreak)
@@ -362,8 +377,10 @@ function showPbjInstructions(txt) {
 
 
 
-function showCinderellaStoryInstructions(txt) {
+// show text instructions on screen
+function showPalpa14Instructions(txt) {
   clearScreen()
+  rec.startRec()
   var textDiv = document.createElement("div")
   textDiv.style.textAlign = 'center'
   var p = document.createElement("p")
@@ -375,7 +392,76 @@ function showCinderellaStoryInstructions(txt) {
   var startBtn = document.createElement("button")
   var startBtnTxt = document.createTextNode("Start")
   startBtn.appendChild(startBtnTxt)
-  startBtn.onclick = showCinderellaImg
+  startBtn.onclick = []
+  btnDiv.appendChild(startBtn)
+  content.appendChild(textDiv)
+  content.appendChild(lineBreak)
+  content.appendChild(btnDiv)
+  return getTime()
+}
+
+// show text instructions on screen
+function showPalpa15Instructions(txt) {
+  clearScreen()
+  rec.startRec()
+  var textDiv = document.createElement("div")
+  textDiv.style.textAlign = 'center'
+  var p = document.createElement("p")
+  var txtNode = document.createTextNode(txt)
+  p.appendChild(txtNode)
+  textDiv.appendChild(p)
+  var lineBreak = document.createElement("br")
+  var btnDiv = document.createElement("div")
+  var startBtn = document.createElement("button")
+  var startBtnTxt = document.createTextNode("Start")
+  startBtn.appendChild(startBtnTxt)
+  startBtn.onclick = []
+  btnDiv.appendChild(startBtn)
+  content.appendChild(textDiv)
+  content.appendChild(lineBreak)
+  content.appendChild(btnDiv)
+  return getTime()
+}
+
+// show text instructions on screen
+function showPalpa16Instructions(txt) {
+  clearScreen()
+  rec.startRec()
+  var textDiv = document.createElement("div")
+  textDiv.style.textAlign = 'center'
+  var p = document.createElement("p")
+  var txtNode = document.createTextNode(txt)
+  p.appendChild(txtNode)
+  textDiv.appendChild(p)
+  var lineBreak = document.createElement("br")
+  var btnDiv = document.createElement("div")
+  var startBtn = document.createElement("button")
+  var startBtnTxt = document.createTextNode("Start")
+  startBtn.appendChild(startBtnTxt)
+  startBtn.onclick = []
+  btnDiv.appendChild(startBtn)
+  content.appendChild(textDiv)
+  content.appendChild(lineBreak)
+  content.appendChild(btnDiv)
+  return getTime()
+}
+
+// show text instructions on screen
+function showPalpa17Instructions(txt) {
+  clearScreen()
+  rec.startRec()
+  var textDiv = document.createElement("div")
+  textDiv.style.textAlign = 'center'
+  var p = document.createElement("p")
+  var txtNode = document.createTextNode(txt)
+  p.appendChild(txtNode)
+  textDiv.appendChild(p)
+  var lineBreak = document.createElement("br")
+  var btnDiv = document.createElement("div")
+  var startBtn = document.createElement("button")
+  var startBtnTxt = document.createTextNode("Start")
+  startBtn.appendChild(startBtnTxt)
+  startBtn.onclick = []
   btnDiv.appendChild(startBtn)
   content.appendChild(textDiv)
   content.appendChild(lineBreak)
@@ -384,97 +470,72 @@ function showCinderellaStoryInstructions(txt) {
 }
 
 
-
-function showPbjImg() {
+function showImg(imgPath, imgDurationMS) {
   clearScreen()
   var imageEl = document.createElement("img")
-  imageEl.src = pbjImg
+  imageEl.src = imgPath
   content.appendChild(imageEl)
-  clearTimeout(pbjTimeoutID)
-  pbjTimeoutID = setTimeout(clearScreenAndStopRecording, pbjTimeoutTime)
+  clearTimeout(imgTimeoutID)
+  imgTimeoutID = setTimeout(clearScreen, imgDurationMS)
   return getTime()
 }
 
 
 
-function showPicnicSceneImg() {
-  clearScreen()
-  var imageEl = document.createElement("img")
-  imageEl.src = picnicSceneImg
-  content.appendChild(imageEl)
-  clearTimeout(picnicSceneTimeoutID)
-  picnicSceneTimeoutID = setTimeout(clearScreenAndStopRecording, picnicSceneTimeoutTime)
-  return getTime()
-}
+// function showCinderellaImg() {
+//   if (!cinderellaStartHasBeenClicked) {
+//     cinderellaStartHasBeenClicked = true
+//   }
+//   clearScreen()
+//   if (cinderellaImgIdx <= maxNumCinderellaImgs-1) {
+//     var imageEl = document.createElement("img")
+//     imageEl.src = path.join(cinderellaImgFolder, cinderellaImgs[cinderellaImgIdx])
+//     content.appendChild(imageEl)
+//     return getTime()
+//   } else {
+//     var textDiv = document.createElement("div")
+//     textDiv.style.textAlign = 'center'
+//     var p = document.createElement("p")
+//     var txtNode = document.createTextNode("That was the last picture!")
+//     p.appendChild(txtNode)
+//     textDiv.appendChild(p)
+//     var lineBreak = document.createElement("br")
+//     var btnDiv = document.createElement("div")
+//     var cinderellaBtn = document.createElement("button")
+//     var cinderellaBtnTxt = document.createTextNode("Tell the story")
+//     cinderellaBtn.appendChild(cinderellaBtnTxt)
+//     cinderellaBtn.onclick = startCinderellaRecording
+//     btnDiv.appendChild(cinderellaBtn)
+//     content.appendChild(textDiv)
+//     content.appendChild(lineBreak)
+//     content.appendChild(btnDiv)
+//   }
+// }
 
 
 
-function showBrokenWindowImg() {
-  clearScreen()
-  var imageEl = document.createElement("img")
-  imageEl.src = brokenWindowImg
-  content.appendChild(imageEl)
-  clearTimeout(brokenWindowTimeoutID)
-  brokenWindowTimeoutID = setTimeout(clearScreenAndStopRecording, brokenWindowTimeoutTime)
-  return getTime()
-}
-
-
-
-function showCinderellaImg() {
-  if (!cinderellaStartHasBeenClicked) {
-    cinderellaStartHasBeenClicked = true
-  }
-  clearScreen()
-  if (cinderellaImgIdx <= maxNumCinderellaImgs-1) {
-    var imageEl = document.createElement("img")
-    imageEl.src = path.join(cinderellaImgFolder, cinderellaImgs[cinderellaImgIdx])
-    content.appendChild(imageEl)
-    return getTime()
-  } else {
-    var textDiv = document.createElement("div")
-    textDiv.style.textAlign = 'center'
-    var p = document.createElement("p")
-    var txtNode = document.createTextNode("That was the last picture!")
-    p.appendChild(txtNode)
-    textDiv.appendChild(p)
-    var lineBreak = document.createElement("br")
-    var btnDiv = document.createElement("div")
-    var cinderellaBtn = document.createElement("button")
-    var cinderellaBtnTxt = document.createTextNode("Tell the story")
-    cinderellaBtn.appendChild(cinderellaBtnTxt)
-    cinderellaBtn.onclick = startCinderellaRecording
-    btnDiv.appendChild(cinderellaBtn)
-    content.appendChild(textDiv)
-    content.appendChild(lineBreak)
-    content.appendChild(btnDiv)
-  }
-}
-
-
-
-function startCinderellaRecording() {
-  clearScreen()
-  var textDiv = document.createElement("div")
-  textDiv.style.textAlign = 'center'
-  var p = document.createElement("p")
-  var txtNode = document.createTextNode("Tell the story of Cinderella without the pictures.")
-  p.appendChild(txtNode)
-  textDiv.appendChild(p)
-  var lineBreak = document.createElement("br")
-  var btnDiv = document.createElement("div")
-  var cinderellaFinishBtn = document.createElement("button")
-  var cinderellaFinishBtnTxt = document.createTextNode("Click to finish")
-  cinderellaFinishBtn.appendChild(cinderellaFinishBtnTxt)
-  cinderellaFinishBtn.onclick = stopRecordingAndShowNav
-  btnDiv.appendChild(cinderellaFinishBtn)
-  content.appendChild(textDiv)
-  content.appendChild(lineBreak)
-  content.appendChild(btnDiv)
-  stopWebCamPreview()
-  rec.startRec()
-  cinderellaRecordingHasStarted = true
-}
+// function startCinderellaRecording() {
+//   clearScreen()
+//   var textDiv = document.createElement("div")
+//   textDiv.style.textAlign = 'center'
+//   var p = document.createElement("p")
+//   var txtNode = document.createTextNode("Tell the story of Cinderella without the pictures.")
+//   p.appendChild(txtNode)
+//   textDiv.appendChild(p)
+//   var lineBreak = document.createElement("br")
+//   var btnDiv = document.createElement("div")
+//   var cinderellaFinishBtn = document.createElement("button")
+//   var cinderellaFinishBtnTxt = document.createTextNode("Click to finish")
+//   cinderellaFinishBtn.appendChild(cinderellaFinishBtnTxt)
+//   cinderellaFinishBtn.onclick = stopRecordingAndShowNav
+//   btnDiv.appendChild(cinderellaFinishBtn)
+//   content.appendChild(textDiv)
+//   content.appendChild(lineBreak)
+//   content.appendChild(btnDiv)
+//   stopWebCamPreview()
+//   rec.startRec()
+//   cinderellaRecordingHasStarted = true
+// }
 
 
 
@@ -694,21 +755,27 @@ function getStarted() {
   assessment = document.getElementById("assessmentID").value
   console.log("assessment chosen: ", assessment)
   if (subjID === '' || sessID === '' || assessment === '') {
-    console.log ('subject and/or session is blank')
-    alert('Participant field or session field is blank!')
+    console.log ('subject, session, or assessment is blank')
+    alert('subject, session, or assessment is blank')
   } else {
     console.log ('subject is: ', subjID)
     console.log('session is: ', sessID)
     stopWebCamPreview()
     closeNav()
-    if (assessment === 'brokenWindow') {
-      showBrokenWindowInstructions(brokenWindowInstructions)
-    } else if (assessment === 'picnicScene') {
-      showPicnicSceneInstructions(picnicSceneInstructions)
-    } else if (assessment === 'pbj') {
-      showPbjInstructions(pbjInstructions)
-    } else if (assessment === 'cinderellaStory') {
-      showCinderellaStoryInstructions(cinderellaStoryInstructions)
+    if (assessment === 'palpa1') {
+      showPalpa1Instructions(palpa1Instructions)
+    } else if (assessment === 'palpa2') {
+      showPalpa2Instructions(palpa2Instructions)
+    } else if (assessment === 'palpa8') {
+      showPalpa8Instructions(palpa8Instructions)
+    } else if (assessment === 'palpa14') {
+      showPalpa14Instructions(palpa14Instructions)
+    } else if (assessment === 'palpa15') {
+      showPalpa15Instructions(palpa15Instructions)
+    } else if (assessment === 'palpa16') {
+      showPalpa16Instructions(palpa16Instructions)
+    } else if (assessment === 'palpa17') {
+      showPalpa17Instructions(palpa17Instructions)
     }
     //showInstructions(instructions)
   }
@@ -750,6 +817,11 @@ function showPreviousTrial() {
   content.appendChild(img)
   trialTimeoutID = setTimeout(showNextTrial, 1000 * timeoutTime)
   return getTime()
+}
+
+
+function resetTrialNumber() {
+  trialNumber = 1
 }
 
 
