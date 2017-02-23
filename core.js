@@ -31,26 +31,40 @@ var beepSound = path.join(__dirname, 'assets', 'beep.wav')
 var exp = new experiment('Phonological-assessment')
 // construct a new ffmpeg recording object
 var rec = new ff()
-var pbjTimeoutID
-var pbjTimeoutTime = 1000*60*5 // 1000ms * 60s * 5min
-var brokenWindowTimeoutID
-var brokenWindowTimeoutTime = 1000*60*5
-var picnicSceneTimeoutID
-var picnicSceneTimeoutTime = 1000*60*2
-var cinderellaTimeoutID
-var cinderellaTimeoutTime = 1000*60*5
+var palpa1TimeoutID
+var palpa2TimeoutID
+var palpa8TimeoutID
+var palpa14TimeoutID
+var palpa15TimeoutID
+var palpa16TimeoutID
+var palpa17TimeoutID
+var palpa1TimeoutTime = 1000*10 // 10 seconds
+var palpa2TimeoutTime = 1000*10 // 10 seconds
+var palpa8TimeoutTime = 1000*10 // 10 seconds
+var palpa14TimeoutTime = 1000*10 // 10 seconds
+var palpa15TimeoutTime = 1000*10 // 10 seconds
+var palpa16TimeoutTime = 1000*10 // 10 seconds
+var palpa17TimeoutTime = 1000*10 // 10 seconds
 exp.getRootPath()
 exp.getMediaPath()
-var brokenWindowImg = path.resolve(exp.mediapath, 'brokenWindow.png')
-console.log(brokenWindowImg)
-var picnicSceneImg = path.resolve(exp.mediapath, 'picnic.jpg')
-var pbjImg = path.resolve(exp.mediapath, 'pbj.png')
-var cinderellaImgFolder = path.join(exp.mediapath, 'cinderellaImgs')
-var cinderellaImgs = fs.readdirSync(cinderellaImgFolder).sort(naturalSort())
-var maxNumCinderellaImgs = cinderellaImgs.length
-var cinderellaImgIdx = 0
-var cinderellaStartHasBeenClicked = false
-var cinderellaRecordingHasStarted = false
+var palpa1MediaPath = path.resolve(exp.mediapath, 'palpa1', 'media')
+var palpa2MediaPath = path.resolve(exp.mediapath, 'palpa2', 'media')
+var palpa8MediaPath = path.resolve(exp.mediapath, 'palpa8', 'media')
+var palpa14MediaPath = path.resolve(exp.mediapath, 'palpa14', 'media')
+var palpa15MediaPath = path.resolve(exp.mediapath, 'palpa15', 'media')
+var palpa16MediaPath = path.resolve(exp.mediapath, 'palpa16', 'media')
+var palpa17MediaPath = path.resolve(exp.mediapath, 'palpa17', 'media')
+var palpa1StimList = fs.readdirSync(palpa1MediaPath).sort(naturalSort())
+var palpa2StimList = fs.readdirSync(palpa2MediaPath).sort(naturalSort())
+var palpa8StimList = fs.readdirSync(palpa8MediaPath).sort(naturalSort())
+var palpa14StimList = fs.readdirSync(palpa14MediaPath).sort(naturalSort())
+var palpa15StimList = fs.readdirSync(palpa15MediaPath).sort(naturalSort())
+var palpa16StimList = fs.readdirSync(palpa16MediaPath).sort(naturalSort())
+var palpa17StimList = fs.readdirSync(palpa17MediaPath).sort(naturalSort())
+// var maxNumCinderellaImgs = cinderellaImgs.length
+// var cinderellaImgIdx = 0
+// var cinderellaStartHasBeenClicked = false
+// var cinderellaRecordingHasStarted = false
 var assessment = ''
 lowLag.init(); // init audio functions
 //console.log(cinderellaImgs)
