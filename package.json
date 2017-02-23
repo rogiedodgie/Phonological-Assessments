@@ -1,7 +1,7 @@
 {
   "name": "Discourse",
   "version": "1.0.0",
-  "description": "A set of common discourse measures used in assessing speech production after stroke ",
+  "description": "",
   "main": "app.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
@@ -10,7 +10,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/hanayik/Discourse-Assessments.git"
+    "url": "git+https://github.com/hanayik/Phonological-Assessments.git"
   },
   "keywords": [
     "speech",
@@ -23,9 +23,9 @@
   "author": "Taylor Hanayik",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/hanayik/Discourse-Assessments/issues"
+    "url": "https://github.com/hanayik/Phonological-Assessments/issues"
   },
-  "homepage": "https://github.com/hanayik/Discourse-Assessments#readme",
+  "homepage": "https://github.com/hanayik/Phonological-Assessments#readme",
   "devDependencies": {
     "app-root-dir": "^1.0.2",
     "csvsync": "^1.0.1",
