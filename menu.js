@@ -43,7 +43,7 @@ const template = [
     ]
   },
   {
-    label: 'Camera',
+    label: 'Utilities',
     submenu: [
       {
         label: 'Start Webcam Preview',
@@ -56,6 +56,10 @@ const template = [
       {
         label: 'Show Data Folder',
         click() {openDataFolder()}
+      },
+      {
+        label: 'Analyze',
+        click() {chooseFile()}
       }
     ]
   },

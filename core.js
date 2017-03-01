@@ -1,8 +1,10 @@
-const { remote, shell } = require('electron')
+const {remote, shell} = require('electron')
 const {Menu, MenuItem} = remote
+const {dialog} = require('electron').remote
 const path = require('path')
 const csvsync = require('csvsync')
 const fs = require('fs')
+const os = require("os");
 const $ = require('jQuery')
 const {app} = require('electron').remote;
 const appRootDir = require('app-root-dir').get() //get the path of the application bundle
@@ -10,7 +12,7 @@ const ffmpeg = appRootDir+'/ffmpeg/ffmpeg'
 const exec = require( 'child_process' ).exec
 const si = require('systeminformation');
 const naturalSort = require('node-natural-sort')
-var userDataPath = app.getPath('videos');
+var userDataPath = app.getPath('userData');
 console.log('user path: ', userDataPath)
 var moment = require('moment')
 var content = document.getElementById("contentDiv")
@@ -77,8 +79,29 @@ var maxNumberOfPalpa14Trials = palpa14Trials.length
 var maxNumberOfPalpa15Trials = palpa15Trials.length
 var maxNumberOfPalpa16Trials = palpa16Trials.length
 var maxNumberOfPalpa17Trials = palpa17Trials.length
+var palpa1FileToSave
+var palpa2FileToSave
+var palpa8FileToSave
+var palpa14FileToSave
+var palpa15FileToSave
+var palpa16FileToSave
+var palpa17FileToSave
+var palpa1DataFileHeader = ['subj', 'session', 'assessment', 'trial', 'diffLoc', 'diffType', 'keyPressed', 'reactionTime', 'accuracy', os.EOL]
+var palpa2DataFileHeader = ['subj', 'session', 'assessment', 'trial', 'diffLoc', 'diffType', 'frequency', 'keyPressed', 'reactionTime', 'accuracy', os.EOL]
+var palpa14DataFileHeader = ['subj', 'session', 'assessment', 'trial', 'conditionType', 'keyPressed', 'reactionTime', 'accuracy', os.EOL]
+var palpa15DataFileHeader = ['subj', 'session', 'assessment', 'trial', 'conditionType', 'keyPressed', 'reactionTime', 'accuracy', os.EOL]
+var palpa16DataFileHeader = ['subj', 'session', 'assessment', 'practice', 'trial', 'wordOrNot', 'keyPressed', 'reactionTime', 'accuracy', 'errorType', os.EOL]
+var palpa17DataFileHeader = ['subj', 'session', 'assessment', 'practice', 'trial', 'wordOrNot', 'keyPressed', 'reactionTime', 'accuracy', 'errorType', os.EOL]
 var assessment = ''
-var trialNumber = 1
+var subjID
+var sessID
+var stimOnset
+var accuracy
+var rt
+//var trialNum = document.getElementById("trialNumID")
+//var trialNumber = 1
+var t = 0
+var tReal = t-1
 lowLag.init(); // init audio functions
 //console.log(cinderellaImgs)
 
@@ -264,10 +287,26 @@ function openDataFolder() {
 }
 
 
+function chooseFile() {
+  console.log("Analyze a file!")
+  dialog.showOpenDialog(
+    {title: "PALPA Analysis",
+    defaultPath: app.getPath('userData'),
+    properties: ["openFile"]},
+  analyzeSelectedFile)
+}
+
+
+function analyzeSelectedFile(filePath) {
+  console.log("file chosen: ", filePath)
+}
+
+
 // play audio file using lowLag API
 function playAudio(fileToPlay) {
   lowLag.load(fileToPlay);
   lowLag.play(fileToPlay);
+  return getTime()
 }
 
 
@@ -304,8 +343,9 @@ function clearScreen() {
 
 // show text instructions on screen
 function showPalpa1Instructions(txt) {
+  palpa1FileToSave = path.join(userDataPath,subjID+'_'+sessID+'_'+assessment+'_'+getDateStamp()+'.csv')
   clearScreen()
-  rec.startRec()
+  //rec.startRec()
   var textDiv = document.createElement("div")
   textDiv.style.textAlign = 'center'
   var p = document.createElement("p")
@@ -317,7 +357,7 @@ function showPalpa1Instructions(txt) {
   var startBtn = document.createElement("button")
   var startBtnTxt = document.createTextNode("Start")
   startBtn.appendChild(startBtnTxt)
-  startBtn.onclick = []
+  startBtn.onclick = showNextPalpa1Trial
   btnDiv.appendChild(startBtn)
   content.appendChild(textDiv)
   content.appendChild(lineBreak)
@@ -329,8 +369,9 @@ function showPalpa1Instructions(txt) {
 
 // show text instructions on screen
 function showPalpa2Instructions(txt) {
+  palpa2FileToSave = path.join(userDataPath,subjID+'_'+sessID+'_'+assessment+'_'+getDateStamp()+'.csv')
   clearScreen()
-  rec.startRec()
+  //rec.startRec()
   var textDiv = document.createElement("div")
   textDiv.style.textAlign = 'center'
   var p = document.createElement("p")
@@ -342,7 +383,7 @@ function showPalpa2Instructions(txt) {
   var startBtn = document.createElement("button")
   var startBtnTxt = document.createTextNode("Start")
   startBtn.appendChild(startBtnTxt)
-  startBtn.onclick = []
+  startBtn.onclick = showNextPalpa2Trial
   btnDiv.appendChild(startBtn)
   content.appendChild(textDiv)
   content.appendChild(lineBreak)
@@ -367,7 +408,7 @@ function showPalpa8Instructions(txt) {
   var startBtn = document.createElement("button")
   var startBtnTxt = document.createTextNode("Start")
   startBtn.appendChild(startBtnTxt)
-  startBtn.onclick = []
+  startBtn.onclick = showNextPalpa8Trial
   btnDiv.appendChild(startBtn)
   content.appendChild(textDiv)
   content.appendChild(lineBreak)
@@ -379,8 +420,9 @@ function showPalpa8Instructions(txt) {
 
 // show text instructions on screen
 function showPalpa14Instructions(txt) {
+  palpa14FileToSave = path.join(userDataPath,subjID+'_'+sessID+'_'+assessment+'_'+getDateStamp()+'.csv')
   clearScreen()
-  rec.startRec()
+  //rec.startRec()
   var textDiv = document.createElement("div")
   textDiv.style.textAlign = 'center'
   var p = document.createElement("p")
@@ -392,7 +434,7 @@ function showPalpa14Instructions(txt) {
   var startBtn = document.createElement("button")
   var startBtnTxt = document.createTextNode("Start")
   startBtn.appendChild(startBtnTxt)
-  startBtn.onclick = []
+  startBtn.onclick = showNextPalpa14Trial
   btnDiv.appendChild(startBtn)
   content.appendChild(textDiv)
   content.appendChild(lineBreak)
@@ -402,8 +444,9 @@ function showPalpa14Instructions(txt) {
 
 // show text instructions on screen
 function showPalpa15Instructions(txt) {
+  palpa15FileToSave = path.join(userDataPath,subjID+'_'+sessID+'_'+assessment+'_'+getDateStamp()+'.csv')
   clearScreen()
-  rec.startRec()
+  //rec.startRec()
   var textDiv = document.createElement("div")
   textDiv.style.textAlign = 'center'
   var p = document.createElement("p")
@@ -415,7 +458,7 @@ function showPalpa15Instructions(txt) {
   var startBtn = document.createElement("button")
   var startBtnTxt = document.createTextNode("Start")
   startBtn.appendChild(startBtnTxt)
-  startBtn.onclick = []
+  startBtn.onclick = showNextPalpa15Trial
   btnDiv.appendChild(startBtn)
   content.appendChild(textDiv)
   content.appendChild(lineBreak)
@@ -425,8 +468,9 @@ function showPalpa15Instructions(txt) {
 
 // show text instructions on screen
 function showPalpa16Instructions(txt) {
+  palpa16FileToSave = path.join(userDataPath,subjID+'_'+sessID+'_'+assessment+'_'+getDateStamp()+'.csv')
   clearScreen()
-  rec.startRec()
+  //rec.startRec()
   var textDiv = document.createElement("div")
   textDiv.style.textAlign = 'center'
   var p = document.createElement("p")
@@ -438,7 +482,7 @@ function showPalpa16Instructions(txt) {
   var startBtn = document.createElement("button")
   var startBtnTxt = document.createTextNode("Start")
   startBtn.appendChild(startBtnTxt)
-  startBtn.onclick = []
+  startBtn.onclick = showNextPalpa16Trial
   btnDiv.appendChild(startBtn)
   content.appendChild(textDiv)
   content.appendChild(lineBreak)
@@ -448,8 +492,9 @@ function showPalpa16Instructions(txt) {
 
 // show text instructions on screen
 function showPalpa17Instructions(txt) {
+  palpa17FileToSave = path.join(userDataPath,subjID+'_'+sessID+'_'+assessment+'_'+getDateStamp()+'.csv')
   clearScreen()
-  rec.startRec()
+  //rec.startRec()
   var textDiv = document.createElement("div")
   textDiv.style.textAlign = 'center'
   var p = document.createElement("p")
@@ -461,7 +506,7 @@ function showPalpa17Instructions(txt) {
   var startBtn = document.createElement("button")
   var startBtnTxt = document.createTextNode("Start")
   startBtn.appendChild(startBtnTxt)
-  startBtn.onclick = []
+  startBtn.onclick = showNextPalpa17Trial
   btnDiv.appendChild(startBtn)
   content.appendChild(textDiv)
   content.appendChild(lineBreak)
@@ -666,6 +711,174 @@ function experiment(name) {
 }
 
 
+function getRT() {
+  return keys.time - stimOnset
+}
+
+
+function checkPalpa1Accuracy() {
+ if (keys.key === palpa1Trials[t].same.trim()) {
+   acc = 1
+ } else {
+   acc = 0
+ }
+ return acc
+}
+
+
+function checkPalpa2Accuracy() {
+ if (keys.key === palpa2Trials[t].same.trim()) {
+   acc = 1
+ } else {
+   acc = 0
+ }
+ return acc
+}
+
+
+function checkPalpa14Accuracy() {
+ if (keys.key === palpa14Trials[t].same.trim()) {
+   acc = 1
+ } else {
+   acc = 0
+ }
+ return acc
+}
+
+
+function checkPalpa15Accuracy() {
+ if (keys.key === palpa15Trials[t].same.trim()) {
+   acc = 1
+ } else {
+   acc = 0
+ }
+ return acc
+}
+
+
+function checkPalpa16Accuracy() {
+ if (keys.key === palpa16Trials[t].same.trim()) {
+   acc = 1
+ } else {
+   acc = 0
+ }
+ return acc
+}
+
+
+function checkPalpa17Accuracy() {
+ if (keys.key === palpa17Trials[t].same.trim()) {
+   acc = 1
+ } else {
+   acc = 0
+ }
+ return acc
+}
+
+
+function appendPalpa1TrialDataToFile(fileToAppend, dataArray) {
+  dataArray.push(os.EOL)
+  dataString = csvsync.stringify(dataArray)
+  if (!fs.existsSync(fileToAppend)) {
+    fs.appendFileSync(fileToAppend, palpa1DataFileHeader)
+    fs.appendFileSync(fileToAppend, dataArray)
+  } else {
+    fs.appendFileSync(fileToAppend, dataArray)
+  }
+  console.log("appended file: ", fileToAppend)
+}
+
+
+function appendPalpa2TrialDataToFile(fileToAppend, dataArray) {
+  dataArray.push(os.EOL)
+  dataString = csvsync.stringify(dataArray)
+  if (!fs.existsSync(fileToAppend)) {
+    fs.appendFileSync(fileToAppend, palpa2DataFileHeader)
+    fs.appendFileSync(fileToAppend, dataArray)
+  } else {
+    fs.appendFileSync(fileToAppend, dataArray)
+  }
+  console.log("appended file: ", fileToAppend)
+}
+
+
+function appendPalpa8TrialDataToFile(fileToAppend, dataArray) {
+  dataArray.push(os.EOL)
+  dataString = csvsync.stringify(dataArray)
+  if (!fs.existsSync(fileToAppend)) {
+    fs.appendFileSync(fileToAppend, palpa8DataFileHeader)
+    fs.appendFileSync(fileToAppend, dataArray)
+  } else {
+    fs.appendFileSync(fileToAppend, dataArray)
+  }
+  console.log("appended file: ", fileToAppend)
+}
+
+
+function appendPalpa14TrialDataToFile(fileToAppend, dataArray) {
+  dataArray.push(os.EOL)
+  dataString = csvsync.stringify(dataArray)
+  if (!fs.existsSync(fileToAppend)) {
+    fs.appendFileSync(fileToAppend, palpa14DataFileHeader)
+    fs.appendFileSync(fileToAppend, dataArray)
+  } else {
+    fs.appendFileSync(fileToAppend, dataArray)
+  }
+  console.log("appended file: ", fileToAppend)
+}
+
+
+function appendPalpa15TrialDataToFile(fileToAppend, dataArray) {
+  dataArray.push(os.EOL)
+  dataString = csvsync.stringify(dataArray)
+  if (!fs.existsSync(fileToAppend)) {
+    fs.appendFileSync(fileToAppend, palpa15DataFileHeader)
+    fs.appendFileSync(fileToAppend, dataArray)
+  } else {
+    fs.appendFileSync(fileToAppend, dataArray)
+  }
+  console.log("appended file: ", fileToAppend)
+}
+
+
+function appendPalpa16TrialDataToFile(fileToAppend, dataArray) {
+  dataArray.push(os.EOL)
+  dataString = csvsync.stringify(dataArray)
+  if (!fs.existsSync(fileToAppend)) {
+    fs.appendFileSync(fileToAppend, palpa16DataFileHeader)
+    fs.appendFileSync(fileToAppend, dataArray)
+  } else {
+    fs.appendFileSync(fileToAppend, dataArray)
+  }
+  console.log("appended file: ", fileToAppend)
+}
+
+
+function appendPalpa17TrialDataToFile(fileToAppend, dataArray) {
+  dataArray.push(os.EOL)
+  dataString = csvsync.stringify(dataArray)
+  if (!fs.existsSync(fileToAppend)) {
+    fs.appendFileSync(fileToAppend, palpa17DataFileHeader)
+    fs.appendFileSync(fileToAppend, dataArray)
+  } else {
+    fs.appendFileSync(fileToAppend, dataArray)
+  }
+  console.log("appended file: ", fileToAppend)
+}
+
+
+function checkPalpa16ErrorType() {
+  var errType = 'x'
+  return errType
+}
+
+
+function checkPalpa17ErrorType() {
+  var errType = 'x'
+  return errType
+}
+
+
 
 // update keys object when a keydown event is detected
 function updateKeys() {
@@ -674,20 +887,54 @@ function updateKeys() {
   keys.time = performance.now() // gives ms
   keys.rt = 0
   console.log("key: " + keys.key)
-  if (keys.key === 'ArrowRight') {
-    if (assessment === 'cinderellaStory') {
-      if (!cinderellaRecordingHasStarted) {
-        cinderellaImgIdx += 1
-        showCinderellaImg()
-      }
+  if (keys.key === '1' || keys.key === '2') {
+    if (assessment === 'palpa1') {
+      accuracy = checkPalpa1Accuracy()
+      console.log("accuracy: ", accuracy)
+      keys.rt = getRT()
+      console.log("RT: ", keys.rt)
+      appendPalpa1TrialDataToFile(palpa1FileToSave, [subjID, sessID, assessment, palpa1Trials[t].name.trim(), palpa1Trials[t].diffLoc.trim(), palpa1Trials[t].diffType.trim(), keys.key, keys.rt, accuracy])
+      showNextPalpa1Trial()
+    } else if (assessment === 'palpa2') {
+      //accuracy = checkPalpa2Accuracy()
+      appendPalpa2TrialDataToFile(palpa2FileToSave, [subjID, sessID, assessment, palpa2Trials[t].name.trim(), palpa2Trials[t].diffLoc.trim(), palpa2Trials[t].diffType.trim(), palpa2Trials[t].freq.trim(), keys.key, keys.rt, accuracy])
+      showNextPalpa2Trial()
+    } else if (assessment === 'palpa8') {
+      showNextPalpa8Trial()
+    } else if (assessment === 'palpa14') {
+      //accuracy = checkPalpa14Accuracy()
+      appendPalpa14TrialDataToFile(palpa14FileToSave, [subjID, sessID, assessment, palpa14Trials[t].PictureName.trim(), palpa14Trials[t].conditionType.trim(), keys.key, keys.rt, accuracy])
+      showNextPalpa14Trial()
+    } else if (assessment === 'palpa15') {
+      //accuracy = checkPalpa15Accuracy()
+      appendPalpa15TrialDataToFile(palpa15FileToSave, [subjID, sessID, assessment, palpa15Trials[t].name.trim(), palpa15Trials[t].conditionType.trim(), keys.key, keys.rt, accuracy])
+      showNextPalpa15Trial()
+    } else if (assessment === 'palpa16') {
+      //accuracy = checkPalpa16Accuracy()
+      palpa16ErrorType = checkPalpa16ErrorType()
+      appendPalpa16TrialDataToFile(palpa16FileToSave, [subjID, sessID, assessment, palpa16Trials[t].practice.trim(), palpa16Trials[t].name.trim(), palpa16Trials[t].wordOrNot.trim(), keys.key, keys.rt, accuracy, palpa16ErrorType])
+      showNextPalpa16Trial()
+    } else if (assessment === 'palpa17') {
+      //accuracy = checkPalpa17Accuracy()
+      palpa17ErrorType = checkPalpa17ErrorType()
+      appendPalpa17TrialDataToFile(palpa17FileToSave, [subjID, sessID, assessment, palpa17Trials[t].practice.trim(), palpa17Trials[t].name.trim(), palpa17Trials[t].wordOrNot.trim(), keys.key, keys.rt, accuracy, palpa17ErrorType])
+      showNextPalpa17Trial()
     }
-  }
-  if (keys.key === 'ArrowLeft') {
-    if (assessment === 'cinderellaStory') {
-      if (!cinderellaRecordingHasStarted) {
-        cinderellaImgIdx -= 1
-        showCinderellaImg()
-      }
+  } else if (keys.key === 'ArrowLeft') {
+    if (assessment === 'palpa1') {
+      showPreviousPalpa1Trial()
+    } else if (assessment === 'palpa2') {
+      showPreviousPalpa2Trial()
+    } else if (assessment === 'palpa8') {
+      showPreviousPalpa8Trial()
+    } else if (assessment === 'palpa14') {
+      showPreviousPalpa14Trial()
+    } else if (assessment === 'palpa15') {
+      showPreviousPalpa15Trial()
+    } else if (assessment === 'palpa16') {
+      showPreviousPalpa16Trial()
+    } else if (assessment === 'palpa17') {
+      showPreviousPalpa17Trial()
     }
   }
 }
@@ -699,15 +946,27 @@ var nav = {
 }
 
 
+function clearAllTimeouts() {
+  clearTimeout(palpa1TimeoutID)
+  clearTimeout(palpa2TimeoutID)
+  clearTimeout(palpa8TimeoutID)
+  clearTimeout(palpa14TimeoutID)
+  clearTimeout(palpa15TimeoutID)
+  clearTimeout(palpa16TimeoutID)
+  clearTimeout(palpa17TimeoutID)
+}
+
+
 // open navigation pane
 function openNav() {
-    document.getElementById("navPanel").style.width = "150px"
-    document.getElementById("contentDiv").style.marginLeft = "150px"
-    document.body.style.backgroundColor = "rgba(0,0,0,0.3)"
-    if (document.getElementById("imageElement")) {
-      document.getElementById("imageElement").style.opacity = "0.1";
-    }
-    document.getElementById("closeNavBtn").innerHTML = "&times;"
+  clearAllTimeouts()
+  document.getElementById("navPanel").style.width = "150px"
+  document.getElementById("contentDiv").style.marginLeft = "150px"
+  document.body.style.backgroundColor = "rgba(0,0,0,0.3)"
+  if (document.getElementById("imageElement")) {
+    document.getElementById("imageElement").style.opacity = "0.1";
+  }
+  document.getElementById("closeNavBtn").innerHTML = "&times;"
 }
 
 
@@ -750,8 +1009,8 @@ function checkForEscape() {
 }
 
 function getStarted() {
-  var subjID = document.getElementById("subjID").value
-  var sessID = document.getElementById("sessID").value
+  subjID = document.getElementById("subjID").value
+  sessID = document.getElementById("sessID").value
   assessment = document.getElementById("assessmentID").value
   console.log("assessment chosen: ", assessment)
   if (subjID === '' || sessID === '' || assessment === '') {
@@ -762,6 +1021,7 @@ function getStarted() {
     console.log('session is: ', sessID)
     stopWebCamPreview()
     closeNav()
+    resetTrialNumber()
     if (assessment === 'palpa1') {
       showPalpa1Instructions(palpa1Instructions)
     } else if (assessment === 'palpa2') {
@@ -802,26 +1062,276 @@ function showNextTrial() {
 }
 
 
-function showPreviousTrial() {
-  clearTimeout(trialTimeoutID)
+function showNextPalpa1Trial() {
+  clearTimeout(palpa1TimeoutID)
+  closeNav()
+  clearScreen()
+  t += 1
+  if (t > maxNumberOfPalpa1Trials) {
+    clearScreen()
+    t = maxNumberOfPalpa1Trials+1
+    return false
+  }
+  var img = document.createElement("img")
+  img.src = path.join(exp.mediapath, 'sound512px' + '.png')
+  img.style.height = "40%"
+  content.appendChild(img)
+  stimOnset = playAudio(path.join(palpa1MediaPath, palpa1Trials[t].name.trim()+'.wav'))
+  palpa1TimeoutID = setTimeout(showNextPalpa1Trial, palpa1TimeoutTime)
+  return stimOnset
+}
+
+
+function showPreviousPalpa1Trial() {
+  clearTimeout(palpa1TimeoutID)
   closeNav()
   t -= 1
   if (t < 0) {
     t=0
   }
-  picNum.value = t
   clearScreen()
   var img = document.createElement("img")
-  img.src = path.join(exp.mediapath, 'pics', trials[t].PictureName.trim() + '.png')
-  playAudio(path.join(exp.mediapath, 'beep.wav'))
+  img.src = path.join(exp.mediapath, 'sound512px' + '.png')
+  img.style.height = "40%"
   content.appendChild(img)
-  trialTimeoutID = setTimeout(showNextTrial, 1000 * timeoutTime)
+  stimOnset = playAudio(path.join(palpa1MediaPath, palpa1Trials[t].name.trim()+'.wav'))
+  palpa1TimeoutID = setTimeout(showNextPalpa1Trial, palpa1TimeoutTime)
+  return getTime()
+}
+
+
+function showNextPalpa2Trial() {
+  clearTimeout(palpa2TimeoutID)
+  closeNav()
+  clearScreen()
+  t += 1
+  if (t > maxNumberOfPalpa2Trials) {
+    clearScreen()
+    t = maxNumberOfPalpa2Trials+1
+    return false
+  }
+  var img = document.createElement("img")
+  img.src = path.join(exp.mediapath, 'sound512px' + '.png')
+  img.style.height = "40%"
+  content.appendChild(img)
+  stimOnset = playAudio(path.join(palpa2MediaPath, palpa2Trials[t].name.trim()+'.wav'))
+  palpa2TimeoutID = setTimeout(showNextPalpa2Trial, palpa2TimeoutTime)
+  return getTime()
+}
+
+
+function showPreviousPalpa2Trial() {
+  clearTimeout(palpa2TimeoutID)
+  closeNav()
+  t -= 1
+  if (t < 0) {
+    t=0
+  }
+  clearScreen()
+  var img = document.createElement("img")
+  img.src = path.join(exp.mediapath, 'sound512px' + '.png')
+  img.style.height = "40%"
+  content.appendChild(img)
+  stimOnset = playAudio(path.join(palpa2MediaPath, palpa2Trials[t].name.trim()+'.wav'))
+  palpa2TimeoutID = setTimeout(showNextPalpa2Trial, palpa2TimeoutTime)
+  return getTime()
+}
+
+
+function showNextPalpa8Trial() {
+  clearTimeout(palpa8TimeoutID)
+  closeNav()
+  clearScreen()
+  t += 1
+  if (t > maxNumberOfPalpa8Trials) {
+    clearScreen()
+    t = maxNumberOfPalpa8Trials+1
+    return false
+  }
+  var img = document.createElement("img")
+  img.src = path.join(exp.mediapath, 'sound512px' + '.png')
+  img.style.height = "40%"
+  content.appendChild(img)
+  playAudio(path.join(palpa8MediaPath, palpa8Trials[t].name.trim()+'.wav'))
+  palpa8TimeoutID = setTimeout(showNextPalpa8Trial, palpa8TimeoutTime)
+  return getTime()
+}
+
+
+function showPreviousPalpa8Trial() {
+  clearTimeout(palpa8TimeoutID)
+  closeNav()
+  t -= 1
+  if (t < 0) {
+    t=0
+  }
+  clearScreen()
+  var img = document.createElement("img")
+  img.src = path.join(exp.mediapath, 'sound512px' + '.png')
+  img.style.height = "40%"
+  content.appendChild(img)
+  playAudio(path.join(palpa8MediaPath, palpa8Trials[t].name.trim()+'.wav'))
+  palpa8TimeoutID = setTimeout(showNextPalpa8Trial, palpa8TimeoutTime)
+  return getTime()
+}
+
+
+function showNextPalpa14Trial() {
+  clearTimeout(palpa14TimeoutID)
+  closeNav()
+  clearScreen()
+  t += 1
+  if (t > maxNumberOfPalpa14Trials) {
+    clearScreen()
+    t = maxNumberOfPalpa14Trials+1
+    return false
+  }
+  var img = document.createElement("img")
+  img.src = path.join(path.join(palpa14MediaPath, palpa14Trials[t].PictureName.trim()+'.png'))
+  img.style.height = "100%"
+  content.appendChild(img)
+  stimOnset = getTime()
+  //playAudio(path.join(palpa14MediaPath, palpa14Trials[t].PictureName.trim()+'.wav'))
+  palpa14TimeoutID = setTimeout(showNextPalpa14Trial, palpa14TimeoutTime)
+  return stimOnset
+}
+
+
+function showPreviousPalpa14Trial() {
+  clearTimeout(palpa14TimeoutID)
+  closeNav()
+  t -= 1
+  if (t < 0) {
+    t=0
+  }
+  clearScreen()
+  var img = document.createElement("img")
+  img.src = path.join(path.join(palpa14MediaPath, palpa14Trials[t].PictureName.trim()+'.png'))
+  img.style.height = "100%"
+  content.appendChild(img)
+  stimOnset = getTime()
+  //playAudio(path.join(palpa14MediaPath, palpa14Trials[t].name.trim()+'.wav'))
+  palpa14TimeoutID = setTimeout(showNextPalpa14Trial, palpa14TimeoutTime)
+  return stimOnset
+}
+
+
+function showNextPalpa15Trial() {
+  clearTimeout(palpa15TimeoutID)
+  closeNav()
+  clearScreen()
+  t += 1
+  if (t > maxNumberOfPalpa15Trials) {
+    clearScreen()
+    t = maxNumberOfPalpa15Trials+1
+    return false
+  }
+  var img = document.createElement("img")
+  img.src = path.join(exp.mediapath, 'sound512px' + '.png')
+  img.style.height = "40%"
+  content.appendChild(img)
+  stimOnset = playAudio(path.join(palpa15MediaPath, palpa15Trials[t].name.trim()+'.wav'))
+  palpa15TimeoutID = setTimeout(showNextPalpa15Trial, palpa15TimeoutTime)
+  return getTime()
+}
+
+
+function showPreviousPalpa15Trial() {
+  clearTimeout(palpa15TimeoutID)
+  closeNav()
+  t -= 1
+  if (t < 0) {
+    t=0
+  }
+  clearScreen()
+  var img = document.createElement("img")
+  img.src = path.join(exp.mediapath, 'sound512px' + '.png')
+  img.style.height = "40%"
+  content.appendChild(img)
+  stimOnset = playAudio(path.join(palpa15MediaPath, palpa15Trials[t].name.trim()+'.wav'))
+  palpa15TimeoutID = setTimeout(showNextPalpa15Trial, palpa15TimeoutTime)
+  return getTime()
+}
+
+
+function showNextPalpa16Trial() {
+  clearTimeout(palpa16TimeoutID)
+  closeNav()
+  clearScreen()
+  t += 1
+  if (t > maxNumberOfPalpa16Trials) {
+    clearScreen()
+    t = maxNumberOfPalpa16Trials+1
+    return false
+  }
+  var img = document.createElement("img")
+  img.src = path.join(exp.mediapath, 'sound512px' + '.png')
+  img.style.height = "40%"
+  content.appendChild(img)
+  stimOnset = playAudio(path.join(palpa16MediaPath, palpa16Trials[t].name.trim()+'.wav'))
+  palpa16TimeoutID = setTimeout(showNextPalpa16Trial, palpa16TimeoutTime)
+  return getTime()
+}
+
+
+function showPreviousPalpa16Trial() {
+  clearTimeout(palpa16TimeoutID)
+  closeNav()
+  t -= 1
+  if (t < 0) {
+    t=0
+  }
+  clearScreen()
+  var img = document.createElement("img")
+  img.src = path.join(exp.mediapath, 'sound512px' + '.png')
+  img.style.height = "40%"
+  content.appendChild(img)
+  stimOnset = playAudio(path.join(palpa16MediaPath, palpa16Trials[t].name.trim()+'.wav'))
+  palpa16TimeoutID = setTimeout(showNextPalpa16Trial, palpa16TimeoutTime)
+  return getTime()
+}
+
+
+function showNextPalpa17Trial() {
+  clearTimeout(palpa17TimeoutID)
+  closeNav()
+  clearScreen()
+  t += 1
+  if (t > maxNumberOfPalpa17Trials) {
+    clearScreen()
+    t = maxNumberOfPalpa17Trials+1
+    return false
+  }
+  var img = document.createElement("img")
+  img.src = path.join(exp.mediapath, 'sound512px' + '.png')
+  img.style.height = "40%"
+  content.appendChild(img)
+  stimOnset = playAudio(path.join(palpa17MediaPath, palpa17Trials[t].name.trim()+'.wav'))
+  palpa17TimeoutID = setTimeout(showNextPalpa17Trial, palpa17TimeoutTime)
+  return getTime()
+}
+
+
+function showPreviousPalpa17Trial() {
+  clearTimeout(palpa17TimeoutID)
+  closeNav()
+  t -= 1
+  if (t < 0) {
+    t=0
+  }
+  clearScreen()
+  var img = document.createElement("img")
+  img.src = path.join(exp.mediapath, 'sound512px' + '.png')
+  img.style.height = "40%"
+  content.appendChild(img)
+  stimOnset = playAudio(path.join(palpa17MediaPath, palpa17Trials[t].name.trim()+'.wav'))
+  palpa17TimeoutID = setTimeout(showNextPalpa17Trial, palpa17TimeoutTime)
   return getTime()
 }
 
 
 function resetTrialNumber() {
-  trialNumber = 1
+  t = 0
 }
 
 
