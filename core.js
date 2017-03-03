@@ -12,7 +12,8 @@ const ffmpeg = appRootDir+'/ffmpeg/ffmpeg'
 const exec = require( 'child_process' ).exec
 const si = require('systeminformation');
 const naturalSort = require('node-natural-sort')
-var userDataPath = app.getPath('userData');
+var userDataPath = path.join(app.getPath('userData'),'Data');
+makeSureUserDataFolderIsThere()
 console.log('user path: ', userDataPath)
 var moment = require('moment')
 var content = document.getElementById("contentDiv")
@@ -220,7 +221,7 @@ function ff() {
   },
   this.datestamp = getDateStamp(),
   this.makeOutputFolder = function () {
-    outpath = path.join(app.getPath('userData'), 'video')
+    outpath = path.join(userDataPath, 'video')
     //fs.mkdirSync(path.join(app.getPath('userData'), 'video'))
     if (!fs.existsSync(outpath)) {
       fs.mkdirSync(outpath)
@@ -240,7 +241,7 @@ function ff() {
   },
   this.startRec = function() {
     cmd = [
-      this.ffmpegPath +
+      '"'+this.ffmpegPath +'"' +
       ' ' + this.shouldOverwrite +
       ' -thread_queue_size ' + this.threadQueSize +
       ' -f ' + this.screenFormat +
@@ -279,7 +280,7 @@ function ff() {
 
 // open data folder in finder
 function openDataFolder() {
-  dataFolder = path.join(app.getPath('userData'), 'video')
+  dataFolder = userDataPath
   if (!fs.existsSync(dataFolder)) {
     fs.mkdirSync(dataFolder)
   }
@@ -287,11 +288,18 @@ function openDataFolder() {
 }
 
 
+function makeSureUserDataFolderIsThere(){
+  if (!fs.existsSync(userDataPath)) {
+    fs.mkdirSync(userDataPath)
+  }
+}
+
+
 function chooseFile() {
   console.log("Analyze a file!")
   dialog.showOpenDialog(
     {title: "PALPA Analysis",
-    defaultPath: app.getPath('userData'),
+    defaultPath: userDataPath,
     properties: ["openFile"]},
   analyzeSelectedFile)
 }
@@ -524,63 +532,6 @@ function showImg(imgPath, imgDurationMS) {
   imgTimeoutID = setTimeout(clearScreen, imgDurationMS)
   return getTime()
 }
-
-
-
-// function showCinderellaImg() {
-//   if (!cinderellaStartHasBeenClicked) {
-//     cinderellaStartHasBeenClicked = true
-//   }
-//   clearScreen()
-//   if (cinderellaImgIdx <= maxNumCinderellaImgs-1) {
-//     var imageEl = document.createElement("img")
-//     imageEl.src = path.join(cinderellaImgFolder, cinderellaImgs[cinderellaImgIdx])
-//     content.appendChild(imageEl)
-//     return getTime()
-//   } else {
-//     var textDiv = document.createElement("div")
-//     textDiv.style.textAlign = 'center'
-//     var p = document.createElement("p")
-//     var txtNode = document.createTextNode("That was the last picture!")
-//     p.appendChild(txtNode)
-//     textDiv.appendChild(p)
-//     var lineBreak = document.createElement("br")
-//     var btnDiv = document.createElement("div")
-//     var cinderellaBtn = document.createElement("button")
-//     var cinderellaBtnTxt = document.createTextNode("Tell the story")
-//     cinderellaBtn.appendChild(cinderellaBtnTxt)
-//     cinderellaBtn.onclick = startCinderellaRecording
-//     btnDiv.appendChild(cinderellaBtn)
-//     content.appendChild(textDiv)
-//     content.appendChild(lineBreak)
-//     content.appendChild(btnDiv)
-//   }
-// }
-
-
-
-// function startCinderellaRecording() {
-//   clearScreen()
-//   var textDiv = document.createElement("div")
-//   textDiv.style.textAlign = 'center'
-//   var p = document.createElement("p")
-//   var txtNode = document.createTextNode("Tell the story of Cinderella without the pictures.")
-//   p.appendChild(txtNode)
-//   textDiv.appendChild(p)
-//   var lineBreak = document.createElement("br")
-//   var btnDiv = document.createElement("div")
-//   var cinderellaFinishBtn = document.createElement("button")
-//   var cinderellaFinishBtnTxt = document.createTextNode("Click to finish")
-//   cinderellaFinishBtn.appendChild(cinderellaFinishBtnTxt)
-//   cinderellaFinishBtn.onclick = stopRecordingAndShowNav
-//   btnDiv.appendChild(cinderellaFinishBtn)
-//   content.appendChild(textDiv)
-//   content.appendChild(lineBreak)
-//   content.appendChild(btnDiv)
-//   stopWebCamPreview()
-//   rec.startRec()
-//   cinderellaRecordingHasStarted = true
-// }
 
 
 
@@ -935,8 +886,6 @@ function updateKeys() {
       accuracy = checkPalpa2Accuracy()
       appendPalpa2TrialDataToFile(palpa2FileToSave, [subjID, sessID, assessment, palpa2Trials[t].name.trim(), palpa2Trials[t].diffLoc.trim(), palpa2Trials[t].diffType.trim(), palpa2Trials[t].freq.trim(), keys.key, keys.rt, accuracy])
       showNextPalpa2Trial()
-    } else if (assessment === 'palpa8') {
-      showNextPalpa8Trial()
     } else if (assessment === 'palpa14') {
       accuracy = checkPalpa14Accuracy()
       appendPalpa14TrialDataToFile(palpa14FileToSave, [subjID, sessID, assessment, palpa14Trials[t].PictureName.trim(), palpa14Trials[t].conditionType.trim(), keys.key, keys.rt, accuracy])
@@ -971,6 +920,8 @@ function updateKeys() {
       palpa17Result = checkPalpa17Accuracy()
       appendPalpa17TrialDataToFile(palpa17FileToSave, [subjID, sessID, assessment, palpa17Trials[t].practice.trim(), palpa17Trials[t].name.trim(), palpa17Trials[t].correctChoice.trim(), palpa17Trials[t].wordOrNot.trim(), keys.key, keys.rt, palpa17Result.acc, palpa17Result.errorType])
       showNextPalpa17Trial()
+    } else if (assessment === 'palpa8') {
+      showNextPalpa8Trial()
     }
   }
 }
