@@ -40,13 +40,13 @@ var palpa14TimeoutID
 var palpa15TimeoutID
 var palpa16TimeoutID
 var palpa17TimeoutID
-var palpa1TimeoutTime = 1000*10 // 10 seconds
-var palpa2TimeoutTime = 1000*10 // 10 seconds
-var palpa8TimeoutTime = 1000*10 // 10 seconds
-var palpa14TimeoutTime = 1000*10 // 10 seconds
-var palpa15TimeoutTime = 1000*10 // 10 seconds
-var palpa16TimeoutTime = 1000*10 // 10 seconds
-var palpa17TimeoutTime = 1000*10 // 10 seconds
+var palpa1TimeoutTime = 1000*30 // 30 seconds
+var palpa2TimeoutTime = 1000*30 // 30 seconds
+var palpa8TimeoutTime = 1000*30 // 30 seconds
+var palpa14TimeoutTime = 1000*30 // 30 seconds
+var palpa15TimeoutTime = 1000*30 // 30 seconds
+var palpa16TimeoutTime = 1000*30 // 30 seconds
+var palpa17TimeoutTime = 1000*30 // 30 seconds
 var imgTimeoutID
 var imgDurationMS = 1000*2 // 2 seconds
 exp.getRootPath()
@@ -90,8 +90,8 @@ var palpa1DataFileHeader = ['subj', 'session', 'assessment', 'trial', 'diffLoc',
 var palpa2DataFileHeader = ['subj', 'session', 'assessment', 'trial', 'diffLoc', 'diffType', 'frequency', 'keyPressed', 'reactionTime', 'accuracy', os.EOL]
 var palpa14DataFileHeader = ['subj', 'session', 'assessment', 'trial', 'conditionType', 'keyPressed', 'reactionTime', 'accuracy', os.EOL]
 var palpa15DataFileHeader = ['subj', 'session', 'assessment', 'trial', 'conditionType', 'keyPressed', 'reactionTime', 'accuracy', os.EOL]
-var palpa16DataFileHeader = ['subj', 'session', 'assessment', 'practice', 'trial', 'wordOrNot', 'keyPressed', 'reactionTime', 'accuracy', 'errorType', os.EOL]
-var palpa17DataFileHeader = ['subj', 'session', 'assessment', 'practice', 'trial', 'wordOrNot', 'keyPressed', 'reactionTime', 'accuracy', 'errorType', os.EOL]
+var palpa16DataFileHeader = ['subj', 'session', 'assessment', 'practice', 'trial', 'target', 'wordOrNot', 'keyPressed', 'reactionTime', 'accuracy', 'errorType', os.EOL]
+var palpa17DataFileHeader = ['subj', 'session', 'assessment', 'practice', 'trial', 'target', 'wordOrNot', 'keyPressed', 'reactionTime', 'accuracy', 'errorType', os.EOL]
 var assessment = ''
 var subjID
 var sessID
@@ -665,6 +665,7 @@ var keys = {
   time : 0,
   rt: 0,
   specialKeys: [' ', 'Enter', 'ArrowRight', 'ArrowLeft', 'ArrowUp', 'ArrowDown', 'Shift', 'Tab', 'BackSpace'],
+  letterKeys: 'abcdefghijklmnopqrstuvwxyz'.split(''),
   alphaNumericKeys: 'abcdefghijklmnopqrstuvwxyz1234567890'.split(''), // inspired by: http://stackoverflow.com/a/31755504/3280952
   whiteList: function () {
     return this.alphaNumericKeys.concat(this.specialKeys)
@@ -737,7 +738,7 @@ function checkPalpa2Accuracy() {
 
 
 function checkPalpa14Accuracy() {
- if (keys.key === palpa14Trials[t].same.trim()) {
+ if (keys.key === palpa14Trials[t].correctResp.trim()) {
    acc = 1
  } else {
    acc = 0
@@ -757,23 +758,58 @@ function checkPalpa15Accuracy() {
 
 
 function checkPalpa16Accuracy() {
- if (keys.key === palpa16Trials[t].same.trim()) {
+ letters = [palpa16Trials[t].letter1.trim(), palpa16Trials[t].letter2.trim(), palpa16Trials[t].letter3.trim(), palpa16Trials[t].letter4.trim(), palpa16Trials[t].letter5.trim()]
+ //errorCodes = [palpa16Trials[t].error1.trim(), palpa16Trials[t].error2.trim(), palpa16Trials[t].error3.trim(), palpa16Trials[t].error4.trim(), palpa16Trials[t].error5.trim()]
+ correctChoice = palpa16Trials[t].name.charAt(0) // first character is the target
+ subjChoice = keys.key
+ if (subjChoice === correctChoice) {
    acc = 1
+   errorType = 'noErr'
  } else {
    acc = 0
+   errorType = 'someErr'
  }
- return acc
+ // } else {
+ //   acc = 0
+ //   errorIdx = errorCodes.indexOf(subjChoice)
+ //   if (errorIdx < 0) {
+ //     errorType = 'keyNotInList'
+ //   } else {
+ //     errorType = errorCodes[errorIdx]
+ //   }
+ // }
+ console.log("errorType: ", errorType, " accuracy: ", acc)
+ return {acc: acc,
+        errorType: errorType}
 }
 
 
 function checkPalpa17Accuracy() {
- if (keys.key === palpa17Trials[t].same.trim()) {
-   acc = 1
- } else {
-   acc = 0
- }
- return acc
+  letters = [palpa17Trials[t].letter1.trim(), palpa17Trials[t].letter2.trim(), palpa17Trials[t].letter3.trim(), palpa17Trials[t].letter4.trim(), palpa17Trials[t].letter5.trim()]
+  //errorCodes = [palpa17Trials[t].error1.trim(), palpa17Trials[t].error2.trim(), palpa17Trials[t].error3.trim(), palpa17Trials[t].error4.trim(), palpa17Trials[t].error5.trim()]
+  correctChoice = palpa17Trials[t].correctChoice.trim() // first character is the target
+  subjChoice = keys.key
+  if (subjChoice === correctChoice) {
+    acc = 1
+    errorType = 'noErr'
+  } else {
+    acc = 0
+    errorType = 'someErr'
+  }
+  // } else {
+  //   acc = 0
+  //   errorIdx = errorCodes.indexOf(subjChoice)
+  //   if (errorIdx < 0) {
+  //     errorType = 'keyNotInList'
+  //   } else {
+  //     errorType = errorCodes[errorIdx]
+  //   }
+  // }
+  console.log("errorType: ", errorType, " accuracy: ", acc)
+  return {acc: acc,
+         errorType: errorType}
 }
+
 
 
 function appendPalpa1TrialDataToFile(fileToAppend, dataArray) {
@@ -896,29 +932,19 @@ function updateKeys() {
       appendPalpa1TrialDataToFile(palpa1FileToSave, [subjID, sessID, assessment, palpa1Trials[t].name.trim(), palpa1Trials[t].diffLoc.trim(), palpa1Trials[t].diffType.trim(), keys.key, keys.rt, accuracy])
       showNextPalpa1Trial()
     } else if (assessment === 'palpa2') {
-      //accuracy = checkPalpa2Accuracy()
+      accuracy = checkPalpa2Accuracy()
       appendPalpa2TrialDataToFile(palpa2FileToSave, [subjID, sessID, assessment, palpa2Trials[t].name.trim(), palpa2Trials[t].diffLoc.trim(), palpa2Trials[t].diffType.trim(), palpa2Trials[t].freq.trim(), keys.key, keys.rt, accuracy])
       showNextPalpa2Trial()
     } else if (assessment === 'palpa8') {
       showNextPalpa8Trial()
     } else if (assessment === 'palpa14') {
-      //accuracy = checkPalpa14Accuracy()
+      accuracy = checkPalpa14Accuracy()
       appendPalpa14TrialDataToFile(palpa14FileToSave, [subjID, sessID, assessment, palpa14Trials[t].PictureName.trim(), palpa14Trials[t].conditionType.trim(), keys.key, keys.rt, accuracy])
       showNextPalpa14Trial()
     } else if (assessment === 'palpa15') {
-      //accuracy = checkPalpa15Accuracy()
+      accuracy = checkPalpa15Accuracy()
       appendPalpa15TrialDataToFile(palpa15FileToSave, [subjID, sessID, assessment, palpa15Trials[t].name.trim(), palpa15Trials[t].conditionType.trim(), keys.key, keys.rt, accuracy])
       showNextPalpa15Trial()
-    } else if (assessment === 'palpa16') {
-      //accuracy = checkPalpa16Accuracy()
-      palpa16ErrorType = checkPalpa16ErrorType()
-      appendPalpa16TrialDataToFile(palpa16FileToSave, [subjID, sessID, assessment, palpa16Trials[t].practice.trim(), palpa16Trials[t].name.trim(), palpa16Trials[t].wordOrNot.trim(), keys.key, keys.rt, accuracy, palpa16ErrorType])
-      showNextPalpa16Trial()
-    } else if (assessment === 'palpa17') {
-      //accuracy = checkPalpa17Accuracy()
-      palpa17ErrorType = checkPalpa17ErrorType()
-      appendPalpa17TrialDataToFile(palpa17FileToSave, [subjID, sessID, assessment, palpa17Trials[t].practice.trim(), palpa17Trials[t].name.trim(), palpa17Trials[t].wordOrNot.trim(), keys.key, keys.rt, accuracy, palpa17ErrorType])
-      showNextPalpa17Trial()
     }
   } else if (keys.key === 'ArrowLeft') {
     if (assessment === 'palpa1') {
@@ -935,6 +961,16 @@ function updateKeys() {
       showPreviousPalpa16Trial()
     } else if (assessment === 'palpa17') {
       showPreviousPalpa17Trial()
+    }
+  } else if (keys.letterKeys.indexOf(keys.key) > -1) {
+    if (assessment === 'palpa16') {
+      palpa16Result = checkPalpa16Accuracy()
+      appendPalpa16TrialDataToFile(palpa16FileToSave, [subjID, sessID, assessment, palpa16Trials[t].practice.trim(), palpa16Trials[t].name.trim(), palpa16Trials[t].name.charAt(0), palpa16Trials[t].wordOrNot.trim(), keys.key, keys.rt, palpa16Result.acc, palpa16Result.errorType])
+      showNextPalpa16Trial()
+    } else if (assessment === 'palpa17') {
+      palpa17Result = checkPalpa17Accuracy()
+      appendPalpa17TrialDataToFile(palpa17FileToSave, [subjID, sessID, assessment, palpa17Trials[t].practice.trim(), palpa17Trials[t].name.trim(), palpa17Trials[t].correctChoice.trim(), palpa17Trials[t].wordOrNot.trim(), keys.key, keys.rt, palpa17Result.acc, palpa17Result.errorType])
+      showNextPalpa17Trial()
     }
   }
 }
