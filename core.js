@@ -93,6 +93,100 @@ var palpa14DataFileHeader = ['subj', 'session', 'assessment', 'trial', 'conditio
 var palpa15DataFileHeader = ['subj', 'session', 'assessment', 'trial', 'conditionType', 'keyPressed', 'reactionTime', 'accuracy', os.EOL]
 var palpa16DataFileHeader = ['subj', 'session', 'assessment', 'practice', 'trial', 'target', 'wordOrNot', 'keyPressed', 'reactionTime', 'accuracy', 'errorType', os.EOL]
 var palpa17DataFileHeader = ['subj', 'session', 'assessment', 'practice', 'trial', 'target', 'wordOrNot', 'keyPressed', 'reactionTime', 'accuracy', 'errorType', os.EOL]
+var palpa16ErrorLookupTable = [
+  [['d','p','b','r'],['v','p','d','c']],
+  [['d','m','t','u'],['m','p','d','c']],
+  [['l','w','m','f'],['p','m','d','c']],
+  [['b','t','d','q'],['v','p','d','c']],
+  [['n','r','m','i'],['m','p','d','c']],
+  [['w','n','l','u'],['m','p','d','c']],
+  [['p','d','t','q'],['v','p','d','c']],
+  [['d','p','l','f'],['v','p','d','c']],
+  [['p','s','l','t'],['m','p','d','c']],
+  [['f','z','s','u'],['v','p','d','c']],
+  [['k','d','t','y'],['v','p','d','c']],
+  [['d','p','b','r'],['v','p','d','c']],
+  [['s','v','f','x'],['v','p','d','c']],
+  [['r','n','m','i'],['p','m','d','c']],
+  [['p','g','t','q'],['v','p','d','c']],
+  [['b','t','m','q'],['v','p','d','c']],
+  [['v','s','z','t'],['v','p','d','c']],
+  [['c','d','g','f'],['p','v','d','c']],
+  [['d','c','t','i'],['m','v','d','c']],
+  [['w','n','l','u'],['m','p','d','c']],
+  [['s','d','f','x'],['v','m','d','c']],
+  [['d','m','t','u'],['m','p','d','c']],
+  [['g','t','m','e'],['v','p','d','c']],
+  [['m','d','b','u'],['p','m','d','c']],
+  [['z','t','c','e'],['v','m','d','c']],
+  [['f','z','s','u'],['v','p','d','c']],
+  [['p','d','l','q'],['v','p','d','c']],
+  [['k','d','t','y'],['v','p','d','c']],
+  [['g','t','d','e'],['v','p','d','c']],
+  [['b','t','l','q'],['v','p','d','c']],
+  [['t','b','p','q'],['v','p','d','c']],
+  [['n','r','m','i'],['m','m','d','c']],
+  [['w','n','l','u'],['m','p','d','c']],
+  [['c','f','w','e'],['m','p','d','c']],
+  [['r','n','m','i'],['p','m','d','c']],
+  [['t','b','l','q'],['v','p','d','c']],
+  [['v','s','h','l'],['v','p','d','c']],
+  [['z','f','v','e'],['v','p','d','c']],
+  [['b','c','s','q'],['v','p','d','c']],
+  [['g','t','d','h'],['v','p','d','c']],
+  [['l','n','m','i'],['p','m','d','c']],
+  [['d','c','t','i'],['m','v','d','c']],
+  [['c','d','h','y'],['v','p','d','c']],
+  [['t','b','p','q'],['v','p','d','c']],
+  [['m','d','p','u'],['p','m','d','c']]
+]
+palpa17ErrorLookupTable = [
+  [['p','m','t','q'],['v','m','d','c']],
+  [['d','p','l','f'],['v','p','d','c']],
+  [['f','z','s','u'],['v','p','d','c']],
+  [['d','m','t','u'],['m','p','d','c']],
+  [['l','t','m','q'],['m','v','d','c']],
+  [['g','t','d','h'],['v','p','d','c']],
+  [['z','t','d','e'],['v','m','d','c']],
+  [['d','p','s','f'],['v','p','d','c']],
+  [['n','b','d','w'],['p','m','d','c']],
+  [['d','c','b','f'],['v','p','d','c']],
+  [['t','l','k','b'],['v','m','d','c']],
+  [['t','n','p','q'],['v','m','d','c']],
+  [['d','s','g','f'],['v','m','d','c']],
+  [['t','n','k','q'],['v','m','d','c']],
+  [['s','d','t','x'],['v','m','d','c']],
+  [['t','g','v','q'],['v','p','d','c']],
+  [['v','p','z','r'],['v','m','d','c']],
+  [['d','p','g','f'],['v','p','d','c']],
+  [['d','l','t','u'],['m','m','d','c']],
+  [['v','s','l','r'],['v','p','d','c']],
+  [['k','b','v','y'],['v','p','d','c']],
+  [['d','n','z','i'],['m','m','d','c']],
+  [['t','p','d','h'],['p','p','d','c']],
+  [['m','d','b','u'],['p','m','d','c']],
+  [['v','s','d','r'],['v','p','d','c']],
+  [['b','d','l','y'],['p','p','d','c']],
+  [['d','s','m','r'],['v','m','d','c']],
+  [['m','d','n','q'],['m','p','d','c']],
+  [['d','p','v','r'],['v','p','d','c']],
+  [['d','l','p','u'],['m','m','d','c']],
+  [['t','b','k','q'],['v','p','d','c']],
+  [['t','b','k','q'],['v','p','d','c']],
+  [['s','d','t','x'],['v','m','d','c']],
+  [['z','f','d','e'],['v','p','d','c']],
+  [['d','n','t','i'],['m','m','d','c']],
+  [['t','n','k','q'],['v','m','d','c']],
+  [['t','f','d','e'],['m','p','d','c']],
+  [['p','d','t','q'],['v','p','d','c']],
+  [['n','b','t','w'],['p','m','d','c']],
+  [['g','t','d','h'],['v','p','d','c']],
+  [['m','l','k','u'],['p','m','d','c']],
+  [['d','m','t','u'],['m','p','d','c']],
+  [['m','d','k','h'],['p','m','d','c']],
+  [['f','z','k','u'],['v','p','d','c']],
+  [['t','n','k','q'],['v','m','d','c']]
+]
 var assessment = ''
 var subjID
 var sessID
@@ -710,7 +804,6 @@ function checkPalpa15Accuracy() {
 
 function checkPalpa16Accuracy() {
  letters = [palpa16Trials[t].letter1.trim(), palpa16Trials[t].letter2.trim(), palpa16Trials[t].letter3.trim(), palpa16Trials[t].letter4.trim(), palpa16Trials[t].letter5.trim()]
- //errorCodes = [palpa16Trials[t].error1.trim(), palpa16Trials[t].error2.trim(), palpa16Trials[t].error3.trim(), palpa16Trials[t].error4.trim(), palpa16Trials[t].error5.trim()]
  correctChoice = palpa16Trials[t].name.charAt(0) // first character is the target
  subjChoice = keys.key
  if (subjChoice === correctChoice) {
@@ -718,17 +811,13 @@ function checkPalpa16Accuracy() {
    errorType = 'noErr'
  } else {
    acc = 0
-   errorType = 'someErr'
+   errIdx = palpa16ErrorLookupTable[t][0].indexOf(subjChoice)
+   if (errIdx > -1) {
+     errorType = palpa16ErrorLookupTable[t][1][errIdx]
+   } else {
+     errorType = 'KeyPressNotLinkedToErrorCode'
+   }
  }
- // } else {
- //   acc = 0
- //   errorIdx = errorCodes.indexOf(subjChoice)
- //   if (errorIdx < 0) {
- //     errorType = 'keyNotInList'
- //   } else {
- //     errorType = errorCodes[errorIdx]
- //   }
- // }
  console.log("errorType: ", errorType, " accuracy: ", acc)
  return {acc: acc,
         errorType: errorType}
@@ -737,7 +826,6 @@ function checkPalpa16Accuracy() {
 
 function checkPalpa17Accuracy() {
   letters = [palpa17Trials[t].letter1.trim(), palpa17Trials[t].letter2.trim(), palpa17Trials[t].letter3.trim(), palpa17Trials[t].letter4.trim(), palpa17Trials[t].letter5.trim()]
-  //errorCodes = [palpa17Trials[t].error1.trim(), palpa17Trials[t].error2.trim(), palpa17Trials[t].error3.trim(), palpa17Trials[t].error4.trim(), palpa17Trials[t].error5.trim()]
   correctChoice = palpa17Trials[t].correctChoice.trim() // first character is the target
   subjChoice = keys.key
   if (subjChoice === correctChoice) {
@@ -745,17 +833,13 @@ function checkPalpa17Accuracy() {
     errorType = 'noErr'
   } else {
     acc = 0
-    errorType = 'someErr'
+    errIdx = palpa17ErrorLookupTable[t][0].indexOf(subjChoice)
+    if (errIdx > -1) {
+      errorType = palpa17ErrorLookupTable[t][1][errIdx]
+    } else {
+      errorType = 'KeyPressNotLinkedToErrorCode'
+    }
   }
-  // } else {
-  //   acc = 0
-  //   errorIdx = errorCodes.indexOf(subjChoice)
-  //   if (errorIdx < 0) {
-  //     errorType = 'keyNotInList'
-  //   } else {
-  //     errorType = errorCodes[errorIdx]
-  //   }
-  // }
   console.log("errorType: ", errorType, " accuracy: ", acc)
   return {acc: acc,
          errorType: errorType}
