@@ -23,13 +23,42 @@ var sys = {
   isMacBook: false // need to detect if macbook for ffmpeg recording framerate value
 }
 //var instructions = "I'm going to ask you to name some pictures. When you hear a beep, a picture will appear on the computer screen. Your job is to name the picture using only one word. We'll practice several pictures before we begin"
-var palpa1Instructions = ["palpa1"]
-var palpa2Instructions = ["palpa2"]
-var palpa8Instructions = ["palpa8"]
-var palpa14Instructions = ["palpa14"]
-var palpa15Instructions = ["palpa15"]
-var palpa16Instructions = ["palpa16"]
-var palpa17Instructions = ["palpa17"]
+var palpa1Instructions = ["This task uses nonwords. Nonwords are not real words, " +
+                    "but they sound as if they could be. I'm going to say two nonwords to you. " +
+                    "Listen carefully: 'zog-zog'. I said the same thing twice. " +
+                    "Listen again: 'zog-zeg'. This time they sounded different. " +
+                    "That's what this task is all about. " +
+                    "Press the GREEN button if the sound the same, and RED if they are different "]
+var palpa2Instructions = ["I'm going to say two words to you. " +
+                    "Listen carefully: 'house-house'. I said the same thing twice. " +
+                    "Listen again: 'house-mouse'. This time they sounded different. " +
+                    "That's what this task is all about. " +
+                    "Press the GREEN button if the sound the same, and RED if they are different. "]
+var palpa8Instructions = ["You will hear some words. They are not real words, " +
+                    "but sound like they could be. " +
+                    "Please repeat each word after you hear it. "]
+var palpa14Instructions = ["This is a silent task. You sill see two pictures appear on the screen. " +
+                    "Think of their names but don't say them. " +
+                    "Your job is to judge whether their names rhyme or not. " +
+                    "Press GREEN if their names rhyme, and " +
+                    "press RED if their names do not rhyme." +
+                    "Let's try a few for practice."]
+var palpa15Instructions = ["I'm going to say two words 'king-sing." +
+                    "They rhyme. The words sound the same at the end. " +
+                    "What about these two: 'rope-wall'. They don't rhyme. " +
+                    "What you have to do is choose if the words rhyme or not. " +
+                    "If they rhyme, press the GREEN button, if not, press the RED button. " +
+                    "Extra practice: 'beard-heard', 'soup-loop', 'leaf-sheaf'"]
+var palpa16Instructions = ["I'm going to play some words for you. " +
+                    "Some are real words, some are made-up words. " +
+                    "Say the words after me. Listen for the FIRST sound in the word. " +
+                    "Use the keyboard to choose the letter that matches the FIRST sound. " +
+                    "Press Left Arrow to repeat a trial."]
+var palpa17Instructions = ["I'm going to play some words for you. " +
+                    "Some are real words, some are made-up words. " +
+                    "Say the words after me. Listen for the LAST sound in the word. " +
+                    "Use the keyboard to choose the letter that matches the LAST sound. " +
+                    "Press Left Arrow to repeat a trial."]
 var beepSound = path.join(__dirname, 'assets', 'beep.wav')
 var exp = new experiment('Phonological-assessment')
 // construct a new ffmpeg recording object
@@ -49,6 +78,7 @@ var palpa15TimeoutTime = 1000*30 // 30 seconds
 var palpa16TimeoutTime = 1000*30 // 30 seconds
 var palpa17TimeoutTime = 1000*30 // 30 seconds
 var imgTimeoutID
+var itiTimeOutID
 var imgDurationMS = 1000*2 // 2 seconds
 exp.getRootPath()
 exp.getMediaPath()
@@ -195,7 +225,7 @@ var accuracy
 var rt
 //var trialNum = document.getElementById("trialNumID")
 //var trialNumber = 1
-var t = 0
+var t = -1
 var tReal = t-1
 lowLag.init(); // init audio functions
 //console.log(cinderellaImgs)
@@ -357,13 +387,13 @@ function ff() {
     console.log('ffmpeg cmd: ')
     console.log(cmd)
     this.isRecording = true
-    exec(cmd, (error, stdout, stderr) => {
+    exec(cmd,{maxBuffer: 2000 * 1024}, (error, stdout, stderr) => {
       if (error) {
         console.error(`exec error: ${error}`)
         return
       }
       // console.log(`stdout: ${stdout}`);
-      // console.log(`stderr: ${stderr}`);
+       console.log(`stderr: ${stderr}`);
     })
   },
   this.stopRec = function () {
@@ -399,8 +429,484 @@ function chooseFile() {
 }
 
 
-function analyzeSelectedFile(filePath) {
+function analyzeSelectedFile(theChosenOne) {
+  filePath = theChosenOne[0]
   console.log("file chosen: ", filePath)
+  data = readCSV(filePath)
+  len = data.length
+  if (filePath.search('palpa1_') > -1) {
+    console.log('analyzing palpa1')
+    scoreSame = 0
+    scoreDiff = 0
+    scoreInitial = 0
+    scoreFinal = 0
+    scoreMetathetic = 0
+    scoreVoice = 0
+    scorePlace = 0
+    scoreManner = 0
+    for (i = 0; i < len; i++) {
+      if (data[i]['diffLoc'] === 's' && Number(data[i]['accuracy']) === 1) {
+        // if sounds were the same and accuracy was 1
+        scoreSame += 1 // increase score by 1
+        console.log('scoreSame: ',scoreSame)
+      }
+      if (data[i]['diffLoc'] !== 's' && Number(data[i]['accuracy']) === 1) {
+        // if sounds were different and accuracy was 1
+        scoreDiff += 1
+      }
+      if (data[i]['diffLoc'] === 'i' && Number(data[i]['accuracy']) === 1) {
+        scoreInitial += 1
+      }
+      if (data[i]['diffLoc'] === 'f' && Number(data[i]['accuracy']) === 1) {
+        scoreFinal += 1
+      }
+      if (data[i]['diffLoc'] === 'm' && Number(data[i]['accuracy']) === 1) {
+        scoreMetathetic += 1
+      }
+      if (data[i]['diffType'] === 'v' && Number(data[i]['accuracy']) === 1) {
+        scoreVoice += 1
+      }
+      if (data[i]['diffType'] === 'p' && Number(data[i]['accuracy']) === 1) {
+        scorePlace += 1
+      }
+      if (data[i]['diffType'] === 'm' && Number(data[i]['accuracy']) === 1) {
+        scoreManner += 1
+      }
+    }
+    clearScreen()
+
+    var textDiv = document.createElement("div")
+    textDiv.style.textAlign = 'center'
+    if (maxNumberOfPalpa1Trials !== len) {
+      var warn_p = document.createElement("p")
+      var warn_txt = document.createTextNode("Warning! The number of trials in the data file does not match the total number of trials for this test")
+      warn_p.appendChild(warn_txt)
+      textDiv.appendChild(warn_p)
+    }
+    // same
+    var same_p = document.createElement("p")
+    var same_txt = document.createTextNode("Score Same: " + scoreSame.toString())
+    same_p.appendChild(same_txt)
+    textDiv.appendChild(same_p)
+
+    //diff
+    var diff_p = document.createElement("p")
+    var diff_txt = document.createTextNode("Score Different: " + scoreDiff.toString())
+    diff_p.appendChild(diff_txt)
+    textDiv.appendChild(diff_p)
+
+    // initial
+    var init_p = document.createElement("p")
+    var init_txt = document.createTextNode("Score Initial: " + scoreInitial.toString())
+    init_p.appendChild(init_txt)
+    textDiv.appendChild(init_p)
+
+    // final
+    var final_p = document.createElement("p")
+    var final_txt = document.createTextNode("Score Final: " + scoreFinal.toString())
+    final_p.appendChild(final_txt)
+    textDiv.appendChild(final_p)
+
+    // metathetic
+    var meta_p = document.createElement("p")
+    var meta_txt = document.createTextNode("Score Metathetic: " + scoreMetathetic.toString())
+    meta_p.appendChild(meta_txt)
+    textDiv.appendChild(meta_p)
+
+    // voice
+    var voice_p = document.createElement("p")
+    var voice_txt = document.createTextNode("Score Voice: " + scoreVoice.toString())
+    voice_p.appendChild(voice_txt)
+    textDiv.appendChild(voice_p)
+
+    // place
+    var place_p = document.createElement("p")
+    var place_txt = document.createTextNode("Score Place: " + scorePlace.toString())
+    place_p.appendChild(place_txt)
+    textDiv.appendChild(place_p)
+
+    // manner
+    var manner_p = document.createElement("p")
+    var manner_txt = document.createTextNode("Score Manner: " + scoreManner.toString())
+    manner_p.appendChild(manner_txt)
+    textDiv.appendChild(manner_p)
+    content.appendChild(textDiv)
+
+  } else if (filePath.search('palpa2_') > -1) {
+    console.log('analyzing palpa2')
+    scoreSame = 0
+    scoreDiff = 0
+    scoreInitial = 0
+    scoreFinal = 0
+    scoreMetathetic = 0
+    scoreVoice = 0
+    scorePlace = 0
+    scoreManner = 0
+    scoreHigh = 0
+    scoreLow = 0
+    for (i = 0; i < len; i++) {
+      if (data[i]['diffLoc'] === 's' && Number(data[i]['accuracy']) === 1) {
+        // if sounds were the same and accuracy was 1
+        scoreSame += 1 // increase score by 1
+        console.log('scoreSame: ',scoreSame)
+      }
+      if (data[i]['diffLoc'] !== 's' && Number(data[i]['accuracy']) === 1) {
+        // if sounds were different and accuracy was 1
+        scoreDiff += 1
+      }
+      if (data[i]['diffLoc'] === 'i' && Number(data[i]['accuracy']) === 1) {
+        scoreInitial += 1
+      }
+      if (data[i]['diffLoc'] === 'f' && Number(data[i]['accuracy']) === 1) {
+        scoreFinal += 1
+      }
+      if (data[i]['diffLoc'] === 'm' && Number(data[i]['accuracy']) === 1) {
+        scoreMetathetic += 1
+      }
+      if (data[i]['diffType'] === 'v' && Number(data[i]['accuracy']) === 1) {
+        scoreVoice += 1
+      }
+      if (data[i]['diffType'] === 'p' && Number(data[i]['accuracy']) === 1) {
+        scorePlace += 1
+      }
+      if (data[i]['diffType'] === 'm' && Number(data[i]['accuracy']) === 1) {
+        scoreManner += 1
+      }
+      if (data[i]['frequency'] === 'h' && Number(data[i]['accuracy']) === 1) {
+        scoreHigh += 1
+      }
+      if (data[i]['frequency'] === 'l' && Number(data[i]['accuracy']) === 1) {
+        scoreLow += 1
+      }
+    }
+    clearScreen()
+    var textDiv = document.createElement("div")
+    textDiv.style.textAlign = 'center'
+    if (maxNumberOfPalpa2Trials !== len) {
+      var warn_p = document.createElement("p")
+      var warn_txt = document.createTextNode("Warning! The number of trials in the data file does not match the total number of trials for this test")
+      warn_p.appendChild(warn_txt)
+      textDiv.appendChild(warn_p)
+    }
+    // same
+    var same_p = document.createElement("p")
+    var same_txt = document.createTextNode("Score Same: " + scoreSame.toString())
+    same_p.appendChild(same_txt)
+    textDiv.appendChild(same_p)
+
+    //diff
+    var diff_p = document.createElement("p")
+    var diff_txt = document.createTextNode("Score Different: " + scoreDiff.toString())
+    diff_p.appendChild(diff_txt)
+    textDiv.appendChild(diff_p)
+
+    // initial
+    var init_p = document.createElement("p")
+    var init_txt = document.createTextNode("Score Initial: " + scoreInitial.toString())
+    init_p.appendChild(init_txt)
+    textDiv.appendChild(init_p)
+
+    // final
+    var final_p = document.createElement("p")
+    var final_txt = document.createTextNode("Score Final: " + scoreFinal.toString())
+    final_p.appendChild(final_txt)
+    textDiv.appendChild(final_p)
+
+    // metathetic
+    var meta_p = document.createElement("p")
+    var meta_txt = document.createTextNode("Score Metathetic: " + scoreMetathetic.toString())
+    meta_p.appendChild(meta_txt)
+    textDiv.appendChild(meta_p)
+
+    // voice
+    var voice_p = document.createElement("p")
+    var voice_txt = document.createTextNode("Score Voice: " + scoreVoice.toString())
+    voice_p.appendChild(voice_txt)
+    textDiv.appendChild(voice_p)
+
+    // place
+    var place_p = document.createElement("p")
+    var place_txt = document.createTextNode("Score Place: " + scorePlace.toString())
+    place_p.appendChild(place_txt)
+    textDiv.appendChild(place_p)
+
+    // manner
+    var manner_p = document.createElement("p")
+    var manner_txt = document.createTextNode("Score Manner: " + scoreManner.toString())
+    manner_p.appendChild(manner_txt)
+    textDiv.appendChild(manner_p)
+
+    // high freq
+    var high_p = document.createElement("p")
+    var high_txt = document.createTextNode("Score High Freq: " + scoreHigh.toString())
+    high_p.appendChild(high_txt)
+    textDiv.appendChild(high_p)
+
+    // low freq
+    var low_p = document.createElement("p")
+    var low_txt = document.createTextNode("Score Low Freq: " + scoreLow.toString())
+    low_p.appendChild(low_txt)
+    textDiv.appendChild(low_p)
+    content.appendChild(textDiv)
+
+  } else if (filePath.search('palpa14_') > -1) {
+    console.log('analyzing palpa14')
+    scoreSS = 0
+    scoreDS = 0
+    scoreNR = 0
+    for (i = 0; i < len; i++) {
+      if (data[i]['conditionType'] === 'SS' && Number(data[i]['accuracy']) === 1) {
+        scoreSS += 1
+      }
+      if (data[i]['conditionType'] === 'DS' && Number(data[i]['accuracy']) === 1) {
+        scoreDS += 1
+      }
+      if (data[i]['conditionType'] === 'NR' && Number(data[i]['accuracy']) === 1) {
+        scoreNR += 1
+      }
+    }
+    clearScreen()
+    var textDiv = document.createElement("div")
+    textDiv.style.textAlign = 'center'
+    if (maxNumberOfPalpa14Trials !== len) {
+      var warn_p = document.createElement("p")
+      var warn_txt = document.createTextNode("Warning! The number of trials in the data file does not match the total number of trials for this test")
+      warn_p.appendChild(warn_txt)
+      textDiv.appendChild(warn_p)
+    }
+    // SS
+    var ss_p = document.createElement("p")
+    var ss_txt = document.createTextNode("Score SS: " + scoreSS.toString())
+    ss_p.appendChild(ss_txt)
+    textDiv.appendChild(ss_p)
+
+    // DS
+    var ds_p = document.createElement("p")
+    var ds_txt = document.createTextNode("Score DS: " + scoreDS.toString())
+    ds_p.appendChild(ds_txt)
+    textDiv.appendChild(ds_p)
+
+    // NR
+    var nr_p = document.createElement("p")
+    var nr_txt = document.createTextNode("Score NR: " + scoreNR.toString())
+    nr_p.appendChild(nr_txt)
+    textDiv.appendChild(nr_p)
+    content.appendChild(textDiv)
+
+  } else if (filePath.search('palpa15_') > -1) {
+    console.log('analyzing palpa15')
+    scoreSPR = 0
+    scoreSPC = 0
+    scorePR = 0
+    scorePC = 0
+    maxScore = 15
+    for (i = 0; i < len; i++) {
+      if (data[i]['conditionType'] === 'spr' && Number(data[i]['accuracy']) === 1) {
+        scoreSPR += 1
+      }
+      if (data[i]['conditionType'] === 'spc' && Number(data[i]['accuracy']) === 1) {
+        scoreSPC += 1
+      }
+      if (data[i]['conditionType'] === 'pr' && Number(data[i]['accuracy']) === 1) {
+        scorePR += 1
+      }
+      if (data[i]['conditionType'] === 'pc' && Number(data[i]['accuracy']) === 1) {
+        scorePC += 1
+      }
+    }
+    clearScreen()
+    var textDiv = document.createElement("div")
+    textDiv.style.textAlign = 'center'
+    if (maxNumberOfPalpa15Trials !== len) {
+      var warn_p = document.createElement("p")
+      var warn_txt = document.createTextNode("Warning! The number of trials in the data file does not match the total number of trials for this test")
+      warn_p.appendChild(warn_txt)
+      textDiv.appendChild(warn_p)
+    }
+    // SPR
+    var spr_p = document.createElement("p")
+    var spr_txt = document.createTextNode("Score SPR Correct: " + scoreSPR.toString() + " Error: " + (maxScore-scoreSPR).toString())
+    spr_p.appendChild(spr_txt)
+    textDiv.appendChild(spr_p)
+
+    // SPC
+    var spc_p = document.createElement("p")
+    var spc_txt = document.createTextNode("Score SPC Correct: " + scoreSPC.toString()  + " Error: " + (maxScore-scoreSPC).toString())
+    spc_p.appendChild(spc_txt)
+    textDiv.appendChild(spc_p)
+
+    // PR
+    var pr_p = document.createElement("p")
+    var pr_txt = document.createTextNode("Score PR Correct: " + scorePR.toString()  + " Error: " + (maxScore-scorePR).toString())
+    pr_p.appendChild(pr_txt)
+    textDiv.appendChild(pr_p)
+
+    // PC
+    var pc_p = document.createElement("p")
+    var pc_txt = document.createTextNode("Score PC Correct: " + scorePC.toString()  + " Error: " + (maxScore-scorePC).toString())
+    pc_p.appendChild(pc_txt)
+    textDiv.appendChild(pc_p)
+    content.appendChild(textDiv)
+
+  } else if (filePath.search('palpa16_') > -1) {
+    console.log('analyzing palpa16')
+    scoreWords = 0
+    scoreNonWords = 0
+    numErrsVoice = 0
+    numErrsPlace = 0
+    numErrsManner = 0
+    numErrsD = 0
+    numErrsVis = 0
+    for (i = 0; i < len; i++) {
+      if (data[i]['wordOrNot'] === '1' && Number(data[i]['accuracy']) === 1) {
+        scoreWords += 1
+      }
+      if (data[i]['wordOrNot'] === '0' && Number(data[i]['accuracy']) === 1) {
+        scoreNonWords += 1
+      }
+      if (data[i]['errorType'] === 'v' && Number(data[i]['accuracy']) === 0) {
+        numErrsVoice += 1
+      }
+      if (data[i]['errorType'] === 'p' && Number(data[i]['accuracy']) === 0) {
+        numErrsPlace += 1
+      }
+      if (data[i]['errorType'] === 'm' && Number(data[i]['accuracy']) === 0) {
+        numErrsManner += 1
+      }
+      if (data[i]['errorType'] === 'd' && Number(data[i]['accuracy']) === 0) {
+        numErrsD += 1
+      }
+      if (data[i]['errorType'] === 'c' && Number(data[i]['accuracy']) === 0) {
+        numErrsVis += 1
+      }
+    }
+    clearScreen()
+    var textDiv = document.createElement("div")
+    textDiv.style.textAlign = 'center'
+    if (maxNumberOfPalpa16Trials !== len) {
+      var warn_p = document.createElement("p")
+      var warn_txt = document.createTextNode("Warning! The number of trials in the data file does not match the total number of trials for this test")
+      warn_p.appendChild(warn_txt)
+      textDiv.appendChild(warn_p)
+    }
+    // words
+    var words_p = document.createElement("p")
+    var words_txt = document.createTextNode("Score Words: " + scoreWords.toString())
+    words_p.appendChild(words_txt)
+    textDiv.appendChild(words_p)
+    // non words
+    var nonwords_p = document.createElement("p")
+    var nonwords_txt = document.createTextNode("Score Non-words: " + scoreNonWords.toString())
+    nonwords_p.appendChild(nonwords_txt)
+    textDiv.appendChild(nonwords_p)
+    // errs voice
+    var voice_p = document.createElement("p")
+    var voice_txt = document.createTextNode("Score Voice: " + numErrsVoice.toString())
+    voice_p.appendChild(voice_txt)
+    textDiv.appendChild(voice_p)
+    // errs place
+    var place_p = document.createElement("p")
+    var place_txt = document.createTextNode("Score Place: " + numErrsPlace.toString())
+    place_p.appendChild(place_txt)
+    textDiv.appendChild(place_p)
+    // errs manner
+    var manner_p = document.createElement("p")
+    var manner_txt = document.createTextNode("Score Manner: " + numErrsManner.toString())
+    manner_p.appendChild(manner_txt)
+    textDiv.appendChild(manner_p)
+    // errs 2+ distinctive
+    var d_p = document.createElement("p")
+    var d_txt = document.createTextNode("Score 2+ distinctive features: " + numErrsD.toString())
+    d_p.appendChild(d_txt)
+    textDiv.appendChild(d_p)
+    // errs visual
+    var vis_p = document.createElement("p")
+    var vis_txt = document.createTextNode("Score Visual: " + numErrsVis.toString())
+    vis_p.appendChild(vis_txt)
+    textDiv.appendChild(vis_p)
+
+    content.appendChild(textDiv)
+
+  } else if (filePath.search('palpa17_') > -1) {
+    console.log('analyzing palpa17')
+    scoreWords = 0
+    scoreNonWords = 0
+    numErrsVoice = 0
+    numErrsPlace = 0
+    numErrsManner = 0
+    numErrsD = 0
+    numErrsVis = 0
+    for (i = 0; i < len; i++) {
+      if (data[i]['wordOrNot'] === '1' && Number(data[i]['accuracy']) === 1) {
+        scoreWords += 1
+      }
+      if (data[i]['wordOrNot'] === '0' && Number(data[i]['accuracy']) === 1) {
+        scoreNonWords += 1
+      }
+      if (data[i]['errorType'] === 'v' && Number(data[i]['accuracy']) === 0) {
+        numErrsVoice += 1
+      }
+      if (data[i]['errorType'] === 'p' && Number(data[i]['accuracy']) === 0) {
+        numErrsPlace += 1
+      }
+      if (data[i]['errorType'] === 'm' && Number(data[i]['accuracy']) === 0) {
+        numErrsManner += 1
+      }
+      if (data[i]['errorType'] === 'd' && Number(data[i]['accuracy']) === 0) {
+        numErrsD += 1
+      }
+      if (data[i]['errorType'] === 'c' && Number(data[i]['accuracy']) === 0) {
+        numErrsVis += 1
+      }
+    }
+    clearScreen()
+    var textDiv = document.createElement("div")
+    textDiv.style.textAlign = 'center'
+    if (maxNumberOfPalpa17Trials !== len) {
+      var warn_p = document.createElement("p")
+      var warn_txt = document.createTextNode("Warning! The number of trials in the data file does not match the total number of trials for this test")
+      warn_p.appendChild(warn_txt)
+      textDiv.appendChild(warn_p)
+    }
+    // words
+    var words_p = document.createElement("p")
+    var words_txt = document.createTextNode("Score Words: " + scoreWords.toString())
+    words_p.appendChild(words_txt)
+    textDiv.appendChild(words_p)
+    // non words
+    var nonwords_p = document.createElement("p")
+    var nonwords_txt = document.createTextNode("Score Non-words: " + scoreNonWords.toString())
+    nonwords_p.appendChild(nonwords_txt)
+    textDiv.appendChild(nonwords_p)
+    // errs voice
+    var voice_p = document.createElement("p")
+    var voice_txt = document.createTextNode("Score Voice: " + numErrsVoice.toString())
+    words_p.appendChild(voice_txt)
+    textDiv.appendChild(voice_p)
+    // errs place
+    var place_p = document.createElement("p")
+    var place_txt = document.createTextNode("Score Place: " + numErrsPlace.toString())
+    place_p.appendChild(place_txt)
+    textDiv.appendChild(place_p)
+    // errs manner
+    var manner_p = document.createElement("p")
+    var manner_txt = document.createTextNode("Score Manner: " + numErrsManner.toString())
+    manner_p.appendChild(manner_txt)
+    textDiv.appendChild(manner_p)
+    // errs 2+ distinctive
+    var d_p = document.createElement("p")
+    var d_txt = document.createTextNode("Score 2+ distinctive features: " + numErrsD.toString())
+    d_p.appendChild(d_txt)
+    textDiv.appendChild(d_p)
+    // errs visual
+    var vis_p = document.createElement("p")
+    var vis_txt = document.createTextNode("Score Visual: " + numErrsVis.toString())
+    vis_p.appendChild(vis_txt)
+    textDiv.appendChild(vis_p)
+
+    content.appendChild(textDiv)
+
+  }
 }
 
 
@@ -803,9 +1309,12 @@ function checkPalpa15Accuracy() {
 
 
 function checkPalpa16Accuracy() {
+  console.log("t is: ", t)
  letters = [palpa16Trials[t].letter1.trim(), palpa16Trials[t].letter2.trim(), palpa16Trials[t].letter3.trim(), palpa16Trials[t].letter4.trim(), palpa16Trials[t].letter5.trim()]
  correctChoice = palpa16Trials[t].name.charAt(0) // first character is the target
  subjChoice = keys.key
+ console.log("subjChoice: ", subjChoice)
+ console.log(palpa16ErrorLookupTable[t][0])
  if (subjChoice === correctChoice) {
    acc = 1
    errorType = 'noErr'
@@ -954,6 +1463,7 @@ function checkPalpa17ErrorType() {
 // update keys object when a keydown event is detected
 function updateKeys() {
   // gets called from: document.addEventListener('keydown', updateKeys);
+  iti = 1500
   keys.key = event.key
   keys.time = performance.now() // gives ms
   keys.rt = 0
@@ -965,19 +1475,27 @@ function updateKeys() {
       keys.rt = getRT()
       console.log("RT: ", keys.rt)
       appendPalpa1TrialDataToFile(palpa1FileToSave, [subjID, sessID, assessment, palpa1Trials[t].name.trim(), palpa1Trials[t].diffLoc.trim(), palpa1Trials[t].diffType.trim(), keys.key, keys.rt, accuracy])
-      showNextPalpa1Trial()
+      clearScreen()
+      itiTimeOutID = setTimeout(function() {showNextPalpa1Trial()}, iti)
+      //showNextPalpa1Trial()
     } else if (assessment === 'palpa2') {
       accuracy = checkPalpa2Accuracy()
       appendPalpa2TrialDataToFile(palpa2FileToSave, [subjID, sessID, assessment, palpa2Trials[t].name.trim(), palpa2Trials[t].diffLoc.trim(), palpa2Trials[t].diffType.trim(), palpa2Trials[t].freq.trim(), keys.key, keys.rt, accuracy])
-      showNextPalpa2Trial()
+      clearScreen()
+      itiTimeOutID = setTimeout(function() {showNextPalpa2Trial()}, iti)
+      //showNextPalpa2Trial()
     } else if (assessment === 'palpa14') {
       accuracy = checkPalpa14Accuracy()
       appendPalpa14TrialDataToFile(palpa14FileToSave, [subjID, sessID, assessment, palpa14Trials[t].PictureName.trim(), palpa14Trials[t].conditionType.trim(), keys.key, keys.rt, accuracy])
-      showNextPalpa14Trial()
+      clearScreen()
+      itiTimeOutID = setTimeout(function() {showNextPalpa14Trial()}, iti)
+      //showNextPalpa14Trial()
     } else if (assessment === 'palpa15') {
       accuracy = checkPalpa15Accuracy()
       appendPalpa15TrialDataToFile(palpa15FileToSave, [subjID, sessID, assessment, palpa15Trials[t].name.trim(), palpa15Trials[t].conditionType.trim(), keys.key, keys.rt, accuracy])
-      showNextPalpa15Trial()
+      clearScreen()
+      itiTimeOutID = setTimeout(function() {showNextPalpa15Trial()}, iti)
+      //showNextPalpa15Trial()
     }
   } else if (keys.key === 'ArrowLeft') {
     if (assessment === 'palpa1') {
@@ -999,13 +1517,18 @@ function updateKeys() {
     if (assessment === 'palpa16') {
       palpa16Result = checkPalpa16Accuracy()
       appendPalpa16TrialDataToFile(palpa16FileToSave, [subjID, sessID, assessment, palpa16Trials[t].practice.trim(), palpa16Trials[t].name.trim(), palpa16Trials[t].name.charAt(0), palpa16Trials[t].wordOrNot.trim(), keys.key, keys.rt, palpa16Result.acc, palpa16Result.errorType])
-      showNextPalpa16Trial()
+      clearScreen()
+      itiTimeOutID = setTimeout(function() {showNextPalpa16Trial()}, iti)
+      //showNextPalpa16Trial()
     } else if (assessment === 'palpa17') {
       palpa17Result = checkPalpa17Accuracy()
       appendPalpa17TrialDataToFile(palpa17FileToSave, [subjID, sessID, assessment, palpa17Trials[t].practice.trim(), palpa17Trials[t].name.trim(), palpa17Trials[t].correctChoice.trim(), palpa17Trials[t].wordOrNot.trim(), keys.key, keys.rt, palpa17Result.acc, palpa17Result.errorType])
-      showNextPalpa17Trial()
+      clearScreen()
+      itiTimeOutID = setTimeout(function() {showNextPalpa17Trial()}, iti)
+      //showNextPalpa17Trial()
     } else if (assessment === 'palpa8') {
-      showNextPalpa8Trial()
+      itiTimeOutID = setTimeout(function() {showNextPalpa8Trial()}, iti)
+      //showNextPalpa8Trial()
     }
   }
 }
@@ -1025,6 +1548,7 @@ function clearAllTimeouts() {
   clearTimeout(palpa15TimeoutID)
   clearTimeout(palpa16TimeoutID)
   clearTimeout(palpa17TimeoutID)
+  clearTimeout(itiTimeOutID)
 }
 
 
@@ -1138,8 +1662,10 @@ function showNextPalpa1Trial() {
   closeNav()
   clearScreen()
   t += 1
-  if (t > maxNumberOfPalpa1Trials) {
+  if (t > maxNumberOfPalpa1Trials-1) {
     clearScreen()
+    clearAllTimeouts()
+    openNav()
     t = maxNumberOfPalpa1Trials+1
     return false
   }
@@ -1156,10 +1682,10 @@ function showNextPalpa1Trial() {
 function showPreviousPalpa1Trial() {
   clearTimeout(palpa1TimeoutID)
   closeNav()
-  t -= 1
-  if (t < 0) {
-    t=0
-  }
+  // t -= 1
+  // if (t < 0) {
+  //   t=0
+  // }
   clearScreen()
   var img = document.createElement("img")
   img.src = path.join(exp.mediapath, 'sound512px' + '.png')
@@ -1176,8 +1702,10 @@ function showNextPalpa2Trial() {
   closeNav()
   clearScreen()
   t += 1
-  if (t > maxNumberOfPalpa2Trials) {
+  if (t > maxNumberOfPalpa2Trials-1) {
     clearScreen()
+    clearAllTimeouts()
+    openNav()
     t = maxNumberOfPalpa2Trials+1
     return false
   }
@@ -1194,10 +1722,10 @@ function showNextPalpa2Trial() {
 function showPreviousPalpa2Trial() {
   clearTimeout(palpa2TimeoutID)
   closeNav()
-  t -= 1
-  if (t < 0) {
-    t=0
-  }
+  // t -= 1
+  // if (t < 0) {
+  //   t=0
+  // }
   clearScreen()
   var img = document.createElement("img")
   img.src = path.join(exp.mediapath, 'sound512px' + '.png')
@@ -1214,8 +1742,10 @@ function showNextPalpa8Trial() {
   closeNav()
   clearScreen()
   t += 1
-  if (t > maxNumberOfPalpa8Trials) {
+  if (t > maxNumberOfPalpa8Trials-1) {
     clearScreen()
+    clearAllTimeouts()
+    openNav()
     t = maxNumberOfPalpa8Trials+1
     return false
   }
@@ -1232,10 +1762,10 @@ function showNextPalpa8Trial() {
 function showPreviousPalpa8Trial() {
   clearTimeout(palpa8TimeoutID)
   closeNav()
-  t -= 1
-  if (t < 0) {
-    t=0
-  }
+  // t -= 1
+  // if (t < 0) {
+  //   t=0
+  // }
   clearScreen()
   var img = document.createElement("img")
   img.src = path.join(exp.mediapath, 'sound512px' + '.png')
@@ -1252,8 +1782,10 @@ function showNextPalpa14Trial() {
   closeNav()
   clearScreen()
   t += 1
-  if (t > maxNumberOfPalpa14Trials) {
+  if (t > maxNumberOfPalpa14Trials-1) {
     clearScreen()
+    clearAllTimeouts()
+    openNav()
     t = maxNumberOfPalpa14Trials+1
     return false
   }
@@ -1271,10 +1803,10 @@ function showNextPalpa14Trial() {
 function showPreviousPalpa14Trial() {
   clearTimeout(palpa14TimeoutID)
   closeNav()
-  t -= 1
-  if (t < 0) {
-    t=0
-  }
+  // t -= 1
+  // if (t < 0) {
+  //   t=0
+  // }
   clearScreen()
   var img = document.createElement("img")
   img.src = path.join(path.join(palpa14MediaPath, palpa14Trials[t].PictureName.trim()+'.png'))
@@ -1292,8 +1824,10 @@ function showNextPalpa15Trial() {
   closeNav()
   clearScreen()
   t += 1
-  if (t > maxNumberOfPalpa15Trials) {
+  if (t > maxNumberOfPalpa15Trials-1) {
     clearScreen()
+    clearAllTimeouts()
+    openNav()
     t = maxNumberOfPalpa15Trials+1
     return false
   }
@@ -1310,10 +1844,10 @@ function showNextPalpa15Trial() {
 function showPreviousPalpa15Trial() {
   clearTimeout(palpa15TimeoutID)
   closeNav()
-  t -= 1
-  if (t < 0) {
-    t=0
-  }
+  // t -= 1
+  // if (t < 0) {
+  //   t=0
+  // }
   clearScreen()
   var img = document.createElement("img")
   img.src = path.join(exp.mediapath, 'sound512px' + '.png')
@@ -1330,15 +1864,32 @@ function showNextPalpa16Trial() {
   closeNav()
   clearScreen()
   t += 1
-  if (t > maxNumberOfPalpa16Trials) {
+  if (t > maxNumberOfPalpa16Trials-1) {
     clearScreen()
+    clearAllTimeouts()
+    openNav()
     t = maxNumberOfPalpa16Trials+1
     return false
   }
-  var img = document.createElement("img")
-  img.src = path.join(exp.mediapath, 'sound512px' + '.png')
-  img.style.height = "40%"
-  content.appendChild(img)
+  console.log("t is: ", t)
+  // var img = document.createElement("img")
+  // img.src = path.join(exp.mediapath, 'sound512px' + '.png')
+  // img.style.height = "40%"
+  // content.appendChild(img)
+  var spaces = "                    "
+  var textDiv = document.createElement("div")
+  textDiv.style.letterSpacing = "40px"
+  textDiv.style.textAlign = 'center'
+  var p = document.createElement("p")
+  p.style.fontSize = "50px"
+  var txt = document.createTextNode(palpa16Trials[t].letter1.trim().toUpperCase() + spaces
+  + palpa16Trials[t].letter2.trim().toUpperCase() + spaces
+  + palpa16Trials[t].letter3.trim().toUpperCase() + spaces
+  + palpa16Trials[t].letter4.trim().toUpperCase() + spaces
+  + palpa16Trials[t].letter5.trim().toUpperCase())
+  p.appendChild(txt)
+  textDiv.appendChild(p)
+  content.appendChild(textDiv)
   stimOnset = playAudio(path.join(palpa16MediaPath, palpa16Trials[t].name.trim()+'.wav'))
   palpa16TimeoutID = setTimeout(showNextPalpa16Trial, palpa16TimeoutTime)
   return getTime()
@@ -1348,15 +1899,29 @@ function showNextPalpa16Trial() {
 function showPreviousPalpa16Trial() {
   clearTimeout(palpa16TimeoutID)
   closeNav()
-  t -= 1
-  if (t < 0) {
-    t=0
-  }
+  // t -= 1
+  // if (t < 0) {
+  //   t=0
+  // }
   clearScreen()
-  var img = document.createElement("img")
-  img.src = path.join(exp.mediapath, 'sound512px' + '.png')
-  img.style.height = "40%"
-  content.appendChild(img)
+  // var img = document.createElement("img")
+  // img.src = path.join(exp.mediapath, 'sound512px' + '.png')
+  // img.style.height = "40%"
+  // content.appendChild(img)
+  var spaces = "                    "
+  var textDiv = document.createElement("div")
+  textDiv.style.letterSpacing = "40px"
+  textDiv.style.textAlign = 'center'
+  var p = document.createElement("p")
+  p.style.fontSize = "50px"
+  var txt = document.createTextNode(palpa16Trials[t].letter1.trim().toUpperCase() + spaces
+  + palpa16Trials[t].letter2.trim().toUpperCase() + spaces
+  + palpa16Trials[t].letter3.trim().toUpperCase() + spaces
+  + palpa16Trials[t].letter4.trim().toUpperCase() + spaces
+  + palpa16Trials[t].letter5.trim().toUpperCase())
+  p.appendChild(txt)
+  textDiv.appendChild(p)
+  content.appendChild(textDiv)
   stimOnset = playAudio(path.join(palpa16MediaPath, palpa16Trials[t].name.trim()+'.wav'))
   palpa16TimeoutID = setTimeout(showNextPalpa16Trial, palpa16TimeoutTime)
   return getTime()
@@ -1368,15 +1933,31 @@ function showNextPalpa17Trial() {
   closeNav()
   clearScreen()
   t += 1
-  if (t > maxNumberOfPalpa17Trials) {
+  if (t > maxNumberOfPalpa17Trials-1) {
     clearScreen()
+    clearAllTimeouts()
+    openNav()
     t = maxNumberOfPalpa17Trials+1
     return false
   }
-  var img = document.createElement("img")
-  img.src = path.join(exp.mediapath, 'sound512px' + '.png')
-  img.style.height = "40%"
-  content.appendChild(img)
+  // var img = document.createElement("img")
+  // img.src = path.join(exp.mediapath, 'sound512px' + '.png')
+  // img.style.height = "40%"
+  // content.appendChild(img)
+  var spaces = "                    "
+  var textDiv = document.createElement("div")
+  textDiv.style.letterSpacing = "40px"
+  textDiv.style.textAlign = 'center'
+  var p = document.createElement("p")
+  p.style.fontSize = "50px"
+  var txt = document.createTextNode(palpa17Trials[t].letter1.trim().toUpperCase() + spaces
+  + palpa17Trials[t].letter2.trim().toUpperCase() + spaces
+  + palpa17Trials[t].letter3.trim().toUpperCase() + spaces
+  + palpa17Trials[t].letter4.trim().toUpperCase() + spaces
+  + palpa17Trials[t].letter5.trim().toUpperCase())
+  p.appendChild(txt)
+  textDiv.appendChild(p)
+  content.appendChild(textDiv)
   stimOnset = playAudio(path.join(palpa17MediaPath, palpa17Trials[t].name.trim()+'.wav'))
   palpa17TimeoutID = setTimeout(showNextPalpa17Trial, palpa17TimeoutTime)
   return getTime()
@@ -1386,15 +1967,29 @@ function showNextPalpa17Trial() {
 function showPreviousPalpa17Trial() {
   clearTimeout(palpa17TimeoutID)
   closeNav()
-  t -= 1
-  if (t < 0) {
-    t=0
-  }
+  // t -= 1
+  // if (t < 0) {
+  //   t=0
+  // }
   clearScreen()
-  var img = document.createElement("img")
-  img.src = path.join(exp.mediapath, 'sound512px' + '.png')
-  img.style.height = "40%"
-  content.appendChild(img)
+  // var img = document.createElement("img")
+  // img.src = path.join(exp.mediapath, 'sound512px' + '.png')
+  // img.style.height = "40%"
+  // content.appendChild(img)
+  var spaces = "                    "
+  var textDiv = document.createElement("div")
+  textDiv.style.letterSpacing = "40px"
+  textDiv.style.textAlign = 'center'
+  var p = document.createElement("p")
+  p.style.fontSize = "50px"
+  var txt = document.createTextNode(palpa17Trials[t].letter1.trim().toUpperCase() + spaces
+  + palpa17Trials[t].letter2.trim().toUpperCase() + spaces
+  + palpa17Trials[t].letter3.trim().toUpperCase() + spaces
+  + palpa17Trials[t].letter4.trim().toUpperCase() + spaces
+  + palpa17Trials[t].letter5.trim().toUpperCase())
+  p.appendChild(txt)
+  textDiv.appendChild(p)
+  content.appendChild(textDiv)
   stimOnset = playAudio(path.join(palpa17MediaPath, palpa17Trials[t].name.trim()+'.wav'))
   palpa17TimeoutID = setTimeout(showNextPalpa17Trial, palpa17TimeoutTime)
   return getTime()
@@ -1402,10 +1997,8 @@ function showPreviousPalpa17Trial() {
 
 
 function resetTrialNumber() {
-  t = 0
+  t = -1
 }
-
-
 
 
 // event listeners that are active for the life of the application
