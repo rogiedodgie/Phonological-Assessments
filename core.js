@@ -812,29 +812,29 @@ function analyzeSelectedFile(theChosenOne) {
     var nonwords_txt = document.createTextNode("Score Non-words: " + scoreNonWords.toString())
     nonwords_p.appendChild(nonwords_txt)
     textDiv.appendChild(nonwords_p)
-    // errs voice
-    var voice_p = document.createElement("p")
-    var voice_txt = document.createTextNode("Score Voice: " + numErrsVoice.toString())
-    voice_p.appendChild(voice_txt)
-    textDiv.appendChild(voice_p)
     // errs place
     var place_p = document.createElement("p")
-    var place_txt = document.createTextNode("Score Place: " + numErrsPlace.toString())
+    var place_txt = document.createTextNode("Score Place: " + (40-numErrsPlace).toString())
     place_p.appendChild(place_txt)
     textDiv.appendChild(place_p)
+    // errs voice
+    var voice_p = document.createElement("p")
+    var voice_txt = document.createTextNode("Score Voice: " + (30-numErrsVoice).toString())
+    voice_p.appendChild(voice_txt)
+    textDiv.appendChild(voice_p)
     // errs manner
     var manner_p = document.createElement("p")
-    var manner_txt = document.createTextNode("Score Manner: " + numErrsManner.toString())
+    var manner_txt = document.createTextNode("Score Manner: " + (20-numErrsManner).toString())
     manner_p.appendChild(manner_txt)
     textDiv.appendChild(manner_p)
     // errs 2+ distinctive
     var d_p = document.createElement("p")
-    var d_txt = document.createTextNode("Score 2+ distinctive features: " + numErrsD.toString())
+    var d_txt = document.createTextNode("Score 2+ distinctive features: " + (45-numErrsD).toString())
     d_p.appendChild(d_txt)
     textDiv.appendChild(d_p)
     // errs visual
     var vis_p = document.createElement("p")
-    var vis_txt = document.createTextNode("Score Visual: " + numErrsVis.toString())
+    var vis_txt = document.createTextNode("Score Visual: " + (45-numErrsVis).toString())
     vis_p.appendChild(vis_txt)
     textDiv.appendChild(vis_p)
 
@@ -891,29 +891,29 @@ function analyzeSelectedFile(theChosenOne) {
     var nonwords_txt = document.createTextNode("Score Non-words: " + scoreNonWords.toString())
     nonwords_p.appendChild(nonwords_txt)
     textDiv.appendChild(nonwords_p)
-    // errs voice
-    var voice_p = document.createElement("p")
-    var voice_txt = document.createTextNode("Score Voice: " + numErrsVoice.toString())
-    words_p.appendChild(voice_txt)
-    textDiv.appendChild(voice_p)
     // errs place
     var place_p = document.createElement("p")
-    var place_txt = document.createTextNode("Score Place: " + numErrsPlace.toString())
+    var place_txt = document.createTextNode("Score Place: " + (30-numErrsPlace).toString())
     place_p.appendChild(place_txt)
     textDiv.appendChild(place_p)
+    // errs voice
+    var voice_p = document.createElement("p")
+    var voice_txt = document.createTextNode("Score Voice: " + (30-numErrsVoice).toString())
+    words_p.appendChild(voice_txt)
+    textDiv.appendChild(voice_p)
     // errs manner
     var manner_p = document.createElement("p")
-    var manner_txt = document.createTextNode("Score Manner: " + numErrsManner.toString())
+    var manner_txt = document.createTextNode("Score Manner: " + (30-numErrsManner).toString())
     manner_p.appendChild(manner_txt)
     textDiv.appendChild(manner_p)
     // errs 2+ distinctive
     var d_p = document.createElement("p")
-    var d_txt = document.createTextNode("Score 2+ distinctive features: " + numErrsD.toString())
+    var d_txt = document.createTextNode("Score 2+ distinctive features: " + (45-numErrsD).toString())
     d_p.appendChild(d_txt)
     textDiv.appendChild(d_p)
     // errs visual
     var vis_p = document.createElement("p")
-    var vis_txt = document.createTextNode("Score Visual: " + numErrsVis.toString())
+    var vis_txt = document.createTextNode("Score Visual: " + (45-numErrsVis).toString())
     vis_p.appendChild(vis_txt)
     textDiv.appendChild(vis_p)
 
