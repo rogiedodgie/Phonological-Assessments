@@ -12,9 +12,7 @@ const ffmpeg = appRootDir+'/ffmpeg/ffmpeg'
 const exec = require( 'child_process' ).exec
 const si = require('systeminformation');
 const naturalSort = require('node-natural-sort')
-var userDataPath = path.join(app.getPath('userData'),'Data');
-makeSureUserDataFolderIsThere()
-console.log('user path: ', userDataPath)
+const mkdirp = require('mkdirp');
 var moment = require('moment')
 var content = document.getElementById("contentDiv")
 var localMediaStream
@@ -228,14 +226,30 @@ var rt
 var t = -1
 var tReal = t-1
 lowLag.init(); // init audio functions
-//console.log(cinderellaImgs)
+var userDataPath = path.join(app.getPath('userData'),'Data')
+makeSureUserDataFolderIsThere()
+var savePath
 
 
 
 
 
 
+function getSubjID() {
+  var subjID = document.getElementById("subjID").value
+  if (subjID === '') {
+    subjID = '0'
+  }
+  return subjID
+}
 
+function getSessID() {
+  var sessID = document.getElementById("sessID").value
+  if (sessID === '') {
+    sessID = '0'
+  }
+  return sessID
+}
 
 //camera preview on
 function startWebCamPreview() {
@@ -345,10 +359,9 @@ function ff() {
   },
   this.datestamp = getDateStamp(),
   this.makeOutputFolder = function () {
-    outpath = path.join(userDataPath, 'video')
-    //fs.mkdirSync(path.join(app.getPath('userData'), 'video'))
+    outpath = path.join(savePath, 'PolarData', this.getAssessmentType(), getSubjID(), getSessID())
     if (!fs.existsSync(outpath)) {
-      fs.mkdirSync(outpath)
+      mkdirp.sync(outpath)
     }
     return outpath
   }
@@ -404,15 +417,15 @@ function ff() {
 
 // open data folder in finder
 function openDataFolder() {
-  dataFolder = userDataPath
+  dataFolder = savePath
   if (!fs.existsSync(dataFolder)) {
-    fs.mkdirSync(dataFolder)
+    mkdirp.sync(dataFolder)
   }
   shell.showItemInFolder(dataFolder)
 }
 
 
-function makeSureUserDataFolderIsThere(){
+function makeSureUserDataFolderIsThere() {
   if (!fs.existsSync(userDataPath)) {
     fs.mkdirSync(userDataPath)
   }
@@ -423,7 +436,7 @@ function chooseFile() {
   console.log("Analyze a file!")
   dialog.showOpenDialog(
     {title: "PALPA Analysis",
-    defaultPath: userDataPath,
+    defaultPath: savePath,
     properties: ["openFile"]},
   analyzeSelectedFile)
 }
@@ -951,7 +964,11 @@ function clearScreen() {
 
 // show text instructions on screen
 function showPalpa1Instructions(txt) {
-  palpa1FileToSave = path.join(userDataPath,subjID+'_'+sessID+'_'+assessment+'_'+getDateStamp()+'.csv')
+  dir = path.join(savePath, 'PolarData', assessment, getSubjID(), getSessID())
+  if (!fs.existsSync(dir)) {
+    mkdirp.sync(dir)
+  }
+  palpa1FileToSave = path.join(dir,subjID+'_'+sessID+'_'+assessment+'_'+getDateStamp()+'.csv')
   clearScreen()
   //rec.startRec()
   var textDiv = document.createElement("div")
@@ -977,7 +994,11 @@ function showPalpa1Instructions(txt) {
 
 // show text instructions on screen
 function showPalpa2Instructions(txt) {
-  palpa2FileToSave = path.join(userDataPath,subjID+'_'+sessID+'_'+assessment+'_'+getDateStamp()+'.csv')
+  dir = path.join(savePath, 'PolarData', assessment, getSubjID(), getSessID())
+  if (!fs.existsSync(dir)) {
+    mkdirp.sync(dir)
+  }
+  palpa2FileToSave = path.join(dir,subjID+'_'+sessID+'_'+assessment+'_'+getDateStamp()+'.csv')
   clearScreen()
   //rec.startRec()
   var textDiv = document.createElement("div")
@@ -1028,7 +1049,11 @@ function showPalpa8Instructions(txt) {
 
 // show text instructions on screen
 function showPalpa14Instructions(txt) {
-  palpa14FileToSave = path.join(userDataPath,subjID+'_'+sessID+'_'+assessment+'_'+getDateStamp()+'.csv')
+  dir = path.join(savePath, 'PolarData', assessment, getSubjID(), getSessID())
+  if (!fs.existsSync(dir)) {
+    mkdirp.sync(dir)
+  }
+  palpa14FileToSave = path.join(dir,subjID+'_'+sessID+'_'+assessment+'_'+getDateStamp()+'.csv')
   clearScreen()
   //rec.startRec()
   var textDiv = document.createElement("div")
@@ -1052,7 +1077,11 @@ function showPalpa14Instructions(txt) {
 
 // show text instructions on screen
 function showPalpa15Instructions(txt) {
-  palpa15FileToSave = path.join(userDataPath,subjID+'_'+sessID+'_'+assessment+'_'+getDateStamp()+'.csv')
+  dir = path.join(savePath, 'PolarData', assessment, getSubjID(), getSessID())
+  if (!fs.existsSync(dir)) {
+    mkdirp.sync(dir)
+  }
+  palpa15FileToSave = path.join(dir,subjID+'_'+sessID+'_'+assessment+'_'+getDateStamp()+'.csv')
   clearScreen()
   //rec.startRec()
   var textDiv = document.createElement("div")
@@ -1076,7 +1105,11 @@ function showPalpa15Instructions(txt) {
 
 // show text instructions on screen
 function showPalpa16Instructions(txt) {
-  palpa16FileToSave = path.join(userDataPath,subjID+'_'+sessID+'_'+assessment+'_'+getDateStamp()+'.csv')
+  dir = path.join(savePath, 'PolarData', assessment, getSubjID(), getSessID())
+  if (!fs.existsSync(dir)) {
+    mkdirp.sync(dir)
+  }
+  palpa16FileToSave = path.join(dir,subjID+'_'+sessID+'_'+assessment+'_'+getDateStamp()+'.csv')
   clearScreen()
   //rec.startRec()
   var textDiv = document.createElement("div")
@@ -1100,7 +1133,11 @@ function showPalpa16Instructions(txt) {
 
 // show text instructions on screen
 function showPalpa17Instructions(txt) {
-  palpa17FileToSave = path.join(userDataPath,subjID+'_'+sessID+'_'+assessment+'_'+getDateStamp()+'.csv')
+  dir = path.join(savePath, 'PolarData', assessment, getSubjID(), getSessID())
+  if (!fs.existsSync(dir)) {
+    mkdirp.sync(dir)
+  }
+  palpa17FileToSave = path.join(dir,subjID+'_'+sessID+'_'+assessment+'_'+getDateStamp()+'.csv')
   clearScreen()
   //rec.startRec()
   var textDiv = document.createElement("div")
@@ -1513,6 +1550,10 @@ function updateKeys() {
     } else if (assessment === 'palpa17') {
       showPreviousPalpa17Trial()
     }
+  } else if (keys.key === 'ArrowRight') {
+    if (assessment === 'palpa8') {
+      itiTimeOutID = setTimeout(function() {showNextPalpa8Trial()}, iti)
+    }
   } else if (keys.letterKeys.indexOf(keys.key) > -1) {
     if (assessment === 'palpa16') {
       palpa16Result = checkPalpa16Accuracy()
@@ -1526,9 +1567,6 @@ function updateKeys() {
       clearScreen()
       itiTimeOutID = setTimeout(function() {showNextPalpa17Trial()}, iti)
       //showNextPalpa17Trial()
-    } else if (assessment === 'palpa8') {
-      itiTimeOutID = setTimeout(function() {showNextPalpa8Trial()}, iti)
-      //showNextPalpa8Trial()
     }
   }
 }
@@ -2004,7 +2042,3 @@ function resetTrialNumber() {
 // event listeners that are active for the life of the application
 document.addEventListener('keyup', checkForEscape)
 document.addEventListener('keyup', updateKeys)
-// document.getElementById("videoElement").style.visibility = "hidden"
-// document.getElementById("textElement").style.visibility = "hidden"
-// document.getElementById("audioElement").style.visibility = "hidden"
-// document.getElementById("buttonElement").style.visibility = "hidden"
