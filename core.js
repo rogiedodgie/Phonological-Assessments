@@ -41,7 +41,7 @@ var palpa14Instructions = ["This is a silent task. You sill see two pictures app
                     "Press GREEN if their names rhyme, and " +
                     "press RED if their names do not rhyme." +
                     "Let's try a few for practice."]
-var palpa15Instructions = ["I'm going to say two words 'king-sing." +
+var palpa15Instructions = ["I'm going to say two words 'king-sing'." +
                     "They rhyme. The words sound the same at the end. " +
                     "What about these two: 'rope-wall'. They don't rhyme. " +
                     "What you have to do is choose if the words rhyme or not. " +
@@ -1747,10 +1747,10 @@ function showNextPalpa2Trial() {
     t = maxNumberOfPalpa2Trials+1
     return false
   }
-  var img = document.createElement("img")
-  img.src = path.join(exp.mediapath, 'sound512px' + '.png')
-  img.style.height = "40%"
-  content.appendChild(img)
+  //var img = document.createElement("img")
+  //img.src = path.join(exp.mediapath, 'sound512px' + '.png')
+  //img.style.height = "40%"
+  //content.appendChild(img)
   stimOnset = playAudio(path.join(palpa2MediaPath, palpa2Trials[t].name.trim()+'.wav'))
   palpa2TimeoutID = setTimeout(showNextPalpa2Trial, palpa2TimeoutTime)
   return getTime()
