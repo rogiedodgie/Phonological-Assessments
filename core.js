@@ -21,42 +21,44 @@ var sys = {
   isMacBook: false // need to detect if macbook for ffmpeg recording framerate value
 }
 //var instructions = "I'm going to ask you to name some pictures. When you hear a beep, a picture will appear on the computer screen. Your job is to name the picture using only one word. We'll practice several pictures before we begin"
-var palpa1Instructions = ["This task uses nonwords. Nonwords are not real words, " +
-                    "but they sound as if they could be. I'm going to say two nonwords to you. " +
-                    "Listen carefully: 'zog-zog'. I said the same thing twice. " +
-                    "Listen again: 'zog-zeg'. This time they sounded different. " +
-                    "That's what this task is all about. " +
-                    "Press the GREEN button if the sound the same, and RED if they are different "]
-var palpa2Instructions = ["I'm going to say two words to you. " +
-                    "Listen carefully: 'house-house'. I said the same thing twice. " +
-                    "Listen again: 'house-mouse'. This time they sounded different. " +
-                    "That's what this task is all about. " +
-                    "Press the GREEN button if the sound the same, and RED if they are different. "]
-var palpa8Instructions = ["You will hear some words. They are not real words, " +
-                    "but sound like they could be. " +
-                    "Please repeat each word after you hear it. "]
-var palpa14Instructions = ["This is a silent task. You sill see two pictures appear on the screen. " +
-                    "Think of their names but don't say them. " +
-                    "Your job is to judge whether their names rhyme or not. " +
-                    "Press GREEN if their names rhyme, and " +
-                    "press RED if their names do not rhyme." +
-                    "Let's try a few for practice."]
-var palpa15Instructions = ["I'm going to say two words 'king-sing'." +
-                    "They rhyme. The words sound the same at the end. " +
-                    "What about these two: 'rope-wall'. They don't rhyme. " +
-                    "What you have to do is choose if the words rhyme or not. " +
-                    "If they rhyme, press the GREEN button, if not, press the RED button. " +
-                    "Extra practice: 'beard-heard', 'soup-loop', 'leaf-sheaf'"]
-var palpa16Instructions = ["I'm going to play some words for you. " +
-                    "Some are real words, some are made-up words. " +
-                    "Say the words after me. Listen for the FIRST sound in the word. " +
-                    "Use the keyboard to choose the letter that matches the FIRST sound. " +
-                    "Press Left Arrow to repeat a trial."]
-var palpa17Instructions = ["I'm going to play some words for you. " +
-                    "Some are real words, some are made-up words. " +
-                    "Say the words after me. Listen for the LAST sound in the word. " +
-                    "Use the keyboard to choose the letter that matches the LAST sound. " +
-                    "Press Left Arrow to repeat a trial."]
+var palpa1Instructions = ["<h1>This task uses nonwords. Nonwords are not real words, <br>" +
+                    "but they sound as if they could be. I'm going to say two nonwords to you. <br>" +
+                    "Listen carefully: 'zog-zog'. I said the same thing twice. <br>" +
+                    "Listen again: 'zog-zeg'. This time they sounded different. <br>" +
+                    "That's what this task is all about. <br>" +
+                    "Press the <span style='color:green'>GREEN</span> button if the sound the same. <br>" +
+                    "Press <span style='color:red'>RED</span> if they are different. </h1>"]
+var palpa2Instructions = ["<h1>I'm going to say two words to you. <br>" +
+                    "Listen carefully: 'house-house'. I said the same thing twice. <br>" +
+                    "Listen again: 'house-mouse'. This time they sounded different. <br>" +
+                    "That's what this task is all about. <br>" +
+                    "Press the <span style='color:green'>GREEN</span> button if the sound the same. <br>" +
+                    "Press <span style='color:red'>RED</span> if they are different. </h1>"]
+var palpa8Instructions = ["<h1>You will hear some words. They are not real words, <br>" +
+                    "but sound like they could be. <br>" +
+                    "Please repeat each word after you hear it. </h1>"]
+var palpa14Instructions = ["<h1>This is a silent task. You sill see two pictures appear on the screen. <br>" +
+                    "Think of their names but don't say them. <br>" +
+                    "Your job is to judge whether their names rhyme or not. <br>" +
+                    "Press <span style='color:green'>GREEN</span> if their names rhyme, and <br>" +
+                    "press <span style='color:red'>RED</span> if their names do not rhyme.<br>" +
+                    "Let's try a few for practice.</h1>"]
+var palpa15Instructions = ["<h1>I'm going to say two words 'king-sing'. <br>" +
+                    "They rhyme. The words sound the same at the end. <br>" +
+                    "What about these two: 'rope-wall'. They don't rhyme. <br>" +
+                    "What you have to do is choose if the words rhyme or not. <br>" +
+                    "If they rhyme, press the <span style='color:green'>GREEN</span> button, if not, press the <span style='color:red'>RED</span> button. <br>" +
+                    "Extra practice: 'beard-heard', 'soup-loop', 'leaf-sheaf' </h1>"]
+var palpa16Instructions = ["<h1>I'm going to play some words for you. <br>" +
+                    "Some are real words, some are made-up words. <br>" +
+                    "Say the words after me. Listen for the FIRST sound in the word. <br>" +
+                    "Use the keyboard to choose the letter that matches the FIRST sound. <br>" +
+                    "Press Left Arrow to repeat a trial. </h1>"]
+var palpa17Instructions = ["<h1>I'm going to play some words for you. <br>" +
+                    "Some are real words, some are made-up words. <br>" +
+                    "Say the words after me. Listen for the LAST sound in the word. <br>" +
+                    "Use the keyboard to choose the letter that matches the LAST sound. <br>" +
+                    "Press Left Arrow to repeat a trial. </h1>"]
 var beepSound = path.join(__dirname, 'assets', 'beep.wav')
 var exp = new experiment('Phonological-assessment')
 // construct a new ffmpeg recording object
@@ -395,7 +397,7 @@ function ff() {
       ' -preset ultrafast' +
       ' -filter_complex ' + this.filter +
       ' -r ' + this.getFramerate().toString() +
-      ' ' + '"' + this.outputFilename() + '"'
+      ' -movflags +faststart ' + '"' + this.outputFilename() + '"'
     ]
     console.log('ffmpeg cmd: ')
     console.log(cmd)
@@ -974,14 +976,16 @@ function showPalpa1Instructions(txt) {
   var textDiv = document.createElement("div")
   textDiv.style.textAlign = 'center'
   var p = document.createElement("p")
-  var txtNode = document.createTextNode(txt)
-  p.appendChild(txtNode)
+  // var txtNode = document.createTextNode(txt)
+  // p.appendChild(txtNode)
+  p.innerHTML = txt
   textDiv.appendChild(p)
   var lineBreak = document.createElement("br")
   var btnDiv = document.createElement("div")
   var startBtn = document.createElement("button")
   var startBtnTxt = document.createTextNode("Start")
   startBtn.appendChild(startBtnTxt)
+  startBtn.className = 'startBtn'
   startBtn.onclick = showNextPalpa1Trial
   btnDiv.appendChild(startBtn)
   content.appendChild(textDiv)
@@ -1004,14 +1008,16 @@ function showPalpa2Instructions(txt) {
   var textDiv = document.createElement("div")
   textDiv.style.textAlign = 'center'
   var p = document.createElement("p")
-  var txtNode = document.createTextNode(txt)
-  p.appendChild(txtNode)
+  // var txtNode = document.createTextNode(txt)
+  // p.appendChild(txtNode)
+  p.innerHTML = txt
   textDiv.appendChild(p)
   var lineBreak = document.createElement("br")
   var btnDiv = document.createElement("div")
   var startBtn = document.createElement("button")
   var startBtnTxt = document.createTextNode("Start")
   startBtn.appendChild(startBtnTxt)
+  startBtn.className = 'startBtn'
   startBtn.onclick = showNextPalpa2Trial
   btnDiv.appendChild(startBtn)
   content.appendChild(textDiv)
@@ -1029,14 +1035,16 @@ function showPalpa8Instructions(txt) {
   var textDiv = document.createElement("div")
   textDiv.style.textAlign = 'center'
   var p = document.createElement("p")
-  var txtNode = document.createTextNode(txt)
-  p.appendChild(txtNode)
+  // var txtNode = document.createTextNode(txt)
+  // p.appendChild(txtNode)
+  p.innerHTML = txt
   textDiv.appendChild(p)
   var lineBreak = document.createElement("br")
   var btnDiv = document.createElement("div")
   var startBtn = document.createElement("button")
   var startBtnTxt = document.createTextNode("Start")
   startBtn.appendChild(startBtnTxt)
+  startBtn.className = 'startBtn'
   startBtn.onclick = showNextPalpa8Trial
   btnDiv.appendChild(startBtn)
   content.appendChild(textDiv)
@@ -1059,14 +1067,16 @@ function showPalpa14Instructions(txt) {
   var textDiv = document.createElement("div")
   textDiv.style.textAlign = 'center'
   var p = document.createElement("p")
-  var txtNode = document.createTextNode(txt)
-  p.appendChild(txtNode)
+  // var txtNode = document.createTextNode(txt)
+  // p.appendChild(txtNode)
+  p.innerHTML = txt
   textDiv.appendChild(p)
   var lineBreak = document.createElement("br")
   var btnDiv = document.createElement("div")
   var startBtn = document.createElement("button")
   var startBtnTxt = document.createTextNode("Start")
   startBtn.appendChild(startBtnTxt)
+  startBtn.className = 'startBtn'
   startBtn.onclick = showNextPalpa14Trial
   btnDiv.appendChild(startBtn)
   content.appendChild(textDiv)
@@ -1087,14 +1097,16 @@ function showPalpa15Instructions(txt) {
   var textDiv = document.createElement("div")
   textDiv.style.textAlign = 'center'
   var p = document.createElement("p")
-  var txtNode = document.createTextNode(txt)
-  p.appendChild(txtNode)
+  // var txtNode = document.createTextNode(txt)
+  // p.appendChild(txtNode)
+  p.innerHTML = txt
   textDiv.appendChild(p)
   var lineBreak = document.createElement("br")
   var btnDiv = document.createElement("div")
   var startBtn = document.createElement("button")
   var startBtnTxt = document.createTextNode("Start")
   startBtn.appendChild(startBtnTxt)
+  startBtn.className = 'startBtn'
   startBtn.onclick = showNextPalpa15Trial
   btnDiv.appendChild(startBtn)
   content.appendChild(textDiv)
@@ -1115,14 +1127,16 @@ function showPalpa16Instructions(txt) {
   var textDiv = document.createElement("div")
   textDiv.style.textAlign = 'center'
   var p = document.createElement("p")
-  var txtNode = document.createTextNode(txt)
-  p.appendChild(txtNode)
+  // var txtNode = document.createTextNode(txt)
+  // p.appendChild(txtNode)
+  p.innerHTML = txt
   textDiv.appendChild(p)
   var lineBreak = document.createElement("br")
   var btnDiv = document.createElement("div")
   var startBtn = document.createElement("button")
   var startBtnTxt = document.createTextNode("Start")
   startBtn.appendChild(startBtnTxt)
+  startBtn.className = 'startBtn'
   startBtn.onclick = showNextPalpa16Trial
   btnDiv.appendChild(startBtn)
   content.appendChild(textDiv)
@@ -1143,14 +1157,16 @@ function showPalpa17Instructions(txt) {
   var textDiv = document.createElement("div")
   textDiv.style.textAlign = 'center'
   var p = document.createElement("p")
-  var txtNode = document.createTextNode(txt)
-  p.appendChild(txtNode)
+  // var txtNode = document.createTextNode(txt)
+  // p.appendChild(txtNode)
+  p.innerHTML = txt
   textDiv.appendChild(p)
   var lineBreak = document.createElement("br")
   var btnDiv = document.createElement("div")
   var startBtn = document.createElement("button")
   var startBtnTxt = document.createTextNode("Start")
   startBtn.appendChild(startBtnTxt)
+  startBtn.className = 'startBtn'
   startBtn.onclick = showNextPalpa17Trial
   btnDiv.appendChild(startBtn)
   content.appendChild(textDiv)
@@ -1686,10 +1702,10 @@ function showNextTrial() {
     return false
   }
   picNum.value = t
-  var img = document.createElement("img")
-  img.src = path.join(exp.mediapath, 'pics', trials[t].PictureName.trim() + '.png')
+  // var img = document.createElement("img")
+  // img.src = path.join(exp.mediapath, 'pics', trials[t].PictureName.trim() + '.png')
+  // content.appendChild(img)
   playAudio(path.join(exp.mediapath, 'beep.wav'))
-  content.appendChild(img)
   trialTimeoutID = setTimeout(showNextTrial, 1000 * timeoutTime)
   return getTime()
 }
@@ -1707,10 +1723,10 @@ function showNextPalpa1Trial() {
     t = maxNumberOfPalpa1Trials+1
     return false
   }
-  var img = document.createElement("img")
-  img.src = path.join(exp.mediapath, 'sound512px' + '.png')
-  img.style.height = "40%"
-  content.appendChild(img)
+  // var img = document.createElement("img")
+  // img.src = path.join(exp.mediapath, 'sound512px' + '.png')
+  // img.style.height = "40%"
+  // content.appendChild(img)
   stimOnset = playAudio(path.join(palpa1MediaPath, palpa1Trials[t].name.trim()+'.wav'))
   palpa1TimeoutID = setTimeout(showNextPalpa1Trial, palpa1TimeoutTime)
   return stimOnset
@@ -1725,10 +1741,10 @@ function showPreviousPalpa1Trial() {
   //   t=0
   // }
   clearScreen()
-  var img = document.createElement("img")
-  img.src = path.join(exp.mediapath, 'sound512px' + '.png')
-  img.style.height = "40%"
-  content.appendChild(img)
+  // var img = document.createElement("img")
+  // img.src = path.join(exp.mediapath, 'sound512px' + '.png')
+  // img.style.height = "40%"
+  // content.appendChild(img)
   stimOnset = playAudio(path.join(palpa1MediaPath, palpa1Trials[t].name.trim()+'.wav'))
   palpa1TimeoutID = setTimeout(showNextPalpa1Trial, palpa1TimeoutTime)
   return getTime()
@@ -1765,10 +1781,10 @@ function showPreviousPalpa2Trial() {
   //   t=0
   // }
   clearScreen()
-  var img = document.createElement("img")
-  img.src = path.join(exp.mediapath, 'sound512px' + '.png')
-  img.style.height = "40%"
-  content.appendChild(img)
+  // var img = document.createElement("img")
+  // img.src = path.join(exp.mediapath, 'sound512px' + '.png')
+  // img.style.height = "40%"
+  // content.appendChild(img)
   stimOnset = playAudio(path.join(palpa2MediaPath, palpa2Trials[t].name.trim()+'.wav'))
   palpa2TimeoutID = setTimeout(showNextPalpa2Trial, palpa2TimeoutTime)
   return getTime()
@@ -1787,10 +1803,10 @@ function showNextPalpa8Trial() {
     t = maxNumberOfPalpa8Trials+1
     return false
   }
-  var img = document.createElement("img")
-  img.src = path.join(exp.mediapath, 'sound512px' + '.png')
-  img.style.height = "40%"
-  content.appendChild(img)
+  // var img = document.createElement("img")
+  // img.src = path.join(exp.mediapath, 'sound512px' + '.png')
+  // img.style.height = "40%"
+  // content.appendChild(img)
   playAudio(path.join(palpa8MediaPath, palpa8Trials[t].name.trim()+'.wav'))
   palpa8TimeoutID = setTimeout(showNextPalpa8Trial, palpa8TimeoutTime)
   return getTime()
@@ -1805,10 +1821,10 @@ function showPreviousPalpa8Trial() {
   //   t=0
   // }
   clearScreen()
-  var img = document.createElement("img")
-  img.src = path.join(exp.mediapath, 'sound512px' + '.png')
-  img.style.height = "40%"
-  content.appendChild(img)
+  // var img = document.createElement("img")
+  // img.src = path.join(exp.mediapath, 'sound512px' + '.png')
+  // img.style.height = "40%"
+  // content.appendChild(img)
   playAudio(path.join(palpa8MediaPath, palpa8Trials[t].name.trim()+'.wav'))
   palpa8TimeoutID = setTimeout(showNextPalpa8Trial, palpa8TimeoutTime)
   return getTime()
@@ -1869,10 +1885,10 @@ function showNextPalpa15Trial() {
     t = maxNumberOfPalpa15Trials+1
     return false
   }
-  var img = document.createElement("img")
-  img.src = path.join(exp.mediapath, 'sound512px' + '.png')
-  img.style.height = "40%"
-  content.appendChild(img)
+  // var img = document.createElement("img")
+  // img.src = path.join(exp.mediapath, 'sound512px' + '.png')
+  // img.style.height = "40%"
+  // content.appendChild(img)
   stimOnset = playAudio(path.join(palpa15MediaPath, palpa15Trials[t].name.trim()+'.wav'))
   palpa15TimeoutID = setTimeout(showNextPalpa15Trial, palpa15TimeoutTime)
   return getTime()
@@ -1887,10 +1903,10 @@ function showPreviousPalpa15Trial() {
   //   t=0
   // }
   clearScreen()
-  var img = document.createElement("img")
-  img.src = path.join(exp.mediapath, 'sound512px' + '.png')
-  img.style.height = "40%"
-  content.appendChild(img)
+  // var img = document.createElement("img")
+  // img.src = path.join(exp.mediapath, 'sound512px' + '.png')
+  // img.style.height = "40%"
+  // content.appendChild(img)
   stimOnset = playAudio(path.join(palpa15MediaPath, palpa15Trials[t].name.trim()+'.wav'))
   palpa15TimeoutID = setTimeout(showNextPalpa15Trial, palpa15TimeoutTime)
   return getTime()
