@@ -26,18 +26,18 @@ var palpa1Instructions = ["<h1>This task uses nonwords. Nonwords are not real wo
                     "Listen carefully: 'zog-zog'. I said the same thing twice. <br>" +
                     "Listen again: 'zog-zeg'. This time they sounded different. <br>" +
                     "That's what this task is all about. <br>" +
-                    "Press the <span style='color:green'>GREEN</span> button if the sound the same. <br>" +
+                    "Press the <span style='color:green'>GREEN</span> button if they sound the same. <br>" +
                     "Press <span style='color:red'>RED</span> if they are different. </h1>"]
 var palpa2Instructions = ["<h1>I'm going to say two words to you. <br>" +
                     "Listen carefully: 'house-house'. I said the same thing twice. <br>" +
                     "Listen again: 'house-mouse'. This time they sounded different. <br>" +
                     "That's what this task is all about. <br>" +
-                    "Press the <span style='color:green'>GREEN</span> button if the sound the same. <br>" +
+                    "Press the <span style='color:green'>GREEN</span> button if they sound the same. <br>" +
                     "Press <span style='color:red'>RED</span> if they are different. </h1>"]
 var palpa8Instructions = ["<h1>You will hear some words. They are not real words, <br>" +
                     "but sound like they could be. <br>" +
                     "Please repeat each word after you hear it. </h1>"]
-var palpa14Instructions = ["<h1>This is a silent task. You sill see two pictures appear on the screen. <br>" +
+var palpa14Instructions = ["<h1>This is a silent task. You will see two pictures appear on the screen. <br>" +
                     "Think of their names but don't say them. <br>" +
                     "Your job is to judge whether their names rhyme or not. <br>" +
                     "Press <span style='color:green'>GREEN</span> if their names rhyme, and <br>" +
@@ -1647,7 +1647,7 @@ function toggleNav() {
 // check if key that was pressed was the escape key or q. Quits experiment immediately
 function checkForEscape() {
   key = event.key
-  if (key === "Escape" || key=== "q") {
+  if (key === "Escape") {
     console.log("Escape was pressed")
     openNav()
     nav.hidden = false
