@@ -13,6 +13,7 @@ const exec = require( 'child_process' ).exec
 const si = require('systeminformation');
 const naturalSort = require('node-natural-sort')
 const mkdirp = require('mkdirp');
+var ipcRenderer = require('electron').ipcRenderer;
 var moment = require('moment')
 var content = document.getElementById("contentDiv")
 var localMediaStream
@@ -233,7 +234,10 @@ makeSureUserDataFolderIsThere()
 var savePath
 
 
-
+function checkForUpdateFromRender() {
+  ipcRenderer.send('user-requests-update')
+  //alert('checked for update')
+}
 
 
 
@@ -405,6 +409,7 @@ function ff() {
     exec(cmd,{maxBuffer: 2000 * 1024}, (error, stdout, stderr) => {
       if (error) {
         console.error(`exec error: ${error}`)
+        alert('Recording stopped!')
         return
       }
       // console.log(`stdout: ${stdout}`);
