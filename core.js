@@ -228,7 +228,7 @@ var rt
 //var trialNumber = 1
 var t = -1
 var tReal = t-1
-lowLag.init(); // init audio functions
+lowLag.init({'force':'audioTag'}); // init audio functions
 var userDataPath = path.join(app.getPath('userData'),'Data')
 makeSureUserDataFolderIsThere()
 var savePath
