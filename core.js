@@ -375,7 +375,7 @@ function ff() {
   },
   this.datestamp = getDateStamp(),
   this.makeOutputFolder = function () {
-    outpath = path.join(savePath, 'PolarData', this.getAssessmentType(), getSubjID(), getSessID())
+    outpath = path.join(savePath, this.getAssessmentType(), getSubjID(), getSessID())
     if (!fs.existsSync(outpath)) {
       mkdirp.sync(outpath)
     }
@@ -981,7 +981,7 @@ function clearScreen() {
 
 // show text instructions on screen
 function showPalpa1Instructions(txt) {
-  dir = path.join(savePath, 'PolarData', assessment, getSubjID(), getSessID())
+  dir = path.join(savePath, assessment, getSubjID(), getSessID())
   if (!fs.existsSync(dir)) {
     mkdirp.sync(dir)
   }
@@ -1013,7 +1013,7 @@ function showPalpa1Instructions(txt) {
 
 // show text instructions on screen
 function showPalpa2Instructions(txt) {
-  dir = path.join(savePath, 'PolarData', assessment, getSubjID(), getSessID())
+  dir = path.join(savePath, assessment, getSubjID(), getSessID())
   if (!fs.existsSync(dir)) {
     mkdirp.sync(dir)
   }
@@ -1072,7 +1072,7 @@ function showPalpa8Instructions(txt) {
 
 // show text instructions on screen
 function showPalpa14Instructions(txt) {
-  dir = path.join(savePath, 'PolarData', assessment, getSubjID(), getSessID())
+  dir = path.join(savePath, assessment, getSubjID(), getSessID())
   if (!fs.existsSync(dir)) {
     mkdirp.sync(dir)
   }
@@ -1102,7 +1102,7 @@ function showPalpa14Instructions(txt) {
 
 // show text instructions on screen
 function showPalpa15Instructions(txt) {
-  dir = path.join(savePath, 'PolarData', assessment, getSubjID(), getSessID())
+  dir = path.join(savePath, assessment, getSubjID(), getSessID())
   if (!fs.existsSync(dir)) {
     mkdirp.sync(dir)
   }
@@ -1132,7 +1132,7 @@ function showPalpa15Instructions(txt) {
 
 // show text instructions on screen
 function showPalpa16Instructions(txt) {
-  dir = path.join(savePath, 'PolarData', assessment, getSubjID(), getSessID())
+  dir = path.join(savePath, assessment, getSubjID(), getSessID())
   if (!fs.existsSync(dir)) {
     mkdirp.sync(dir)
   }
@@ -1162,7 +1162,7 @@ function showPalpa16Instructions(txt) {
 
 // show text instructions on screen
 function showPalpa17Instructions(txt) {
-  dir = path.join(savePath, 'PolarData', assessment, getSubjID(), getSessID())
+  dir = path.join(savePath, assessment, getSubjID(), getSessID())
   if (!fs.existsSync(dir)) {
     mkdirp.sync(dir)
   }
