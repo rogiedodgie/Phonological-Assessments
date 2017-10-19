@@ -71,13 +71,13 @@ var palpa14TimeoutID
 var palpa15TimeoutID
 var palpa16TimeoutID
 var palpa17TimeoutID
-var palpa1TimeoutTime = 1000*30 // 30 seconds
-var palpa2TimeoutTime = 1000*30 // 30 seconds
-var palpa8TimeoutTime = 1000*30 // 30 seconds
-var palpa14TimeoutTime = 1000*30 // 30 seconds
-var palpa15TimeoutTime = 1000*30 // 30 seconds
-var palpa16TimeoutTime = 1000*30 // 30 seconds
-var palpa17TimeoutTime = 1000*30 // 30 seconds
+var palpa1TimeoutTime = 1000*60 // 30 seconds
+var palpa2TimeoutTime = 1000*60 // 30 seconds
+var palpa8TimeoutTime = 1000*60 // 30 seconds
+var palpa14TimeoutTime = 1000*60 // 30 seconds
+var palpa15TimeoutTime = 1000*60 // 30 seconds
+var palpa16TimeoutTime = 1000*60 // 30 seconds
+var palpa17TimeoutTime = 1000*60 // 30 seconds
 var imgTimeoutID
 var itiTimeOutID
 var imgDurationMS = 1000*2 // 2 seconds
