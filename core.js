@@ -2015,10 +2015,10 @@ function showNextPalpa17Trial() {
   // content.appendChild(img)
   var spaces = "                    "
   var textDiv = document.createElement("div")
-  textDiv.style.letterSpacing = "40px"
+  textDiv.style.letterSpacing = "70px"
   textDiv.style.textAlign = 'center'
   var p = document.createElement("p")
-  p.style.fontSize = "50px"
+  p.style.fontSize = "60px"
   var txt = document.createTextNode(palpa17Trials[t].letter1.trim().toUpperCase() + spaces
   + palpa17Trials[t].letter2.trim().toUpperCase() + spaces
   + palpa17Trials[t].letter3.trim().toUpperCase() + spaces
