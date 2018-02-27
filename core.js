@@ -118,6 +118,8 @@ var palpa14FileToSave
 var palpa15FileToSave
 var palpa16FileToSave
 var palpa17FileToSave
+var isPalpa16PracticeTrial
+var isPalpa17PracticeTrial
 var palpa1DataFileHeader = ['subj', 'session', 'assessment', 'trial', 'diffLoc', 'diffType', 'keyPressed', 'reactionTime', 'accuracy', os.EOL]
 var palpa2DataFileHeader = ['subj', 'session', 'assessment', 'trial', 'diffLoc', 'diffType', 'frequency', 'keyPressed', 'reactionTime', 'accuracy', os.EOL]
 var palpa14DataFileHeader = ['subj', 'session', 'assessment', 'trial', 'conditionType', 'keyPressed', 'reactionTime', 'accuracy', os.EOL]
@@ -813,7 +815,7 @@ function analyzeSelectedFile(theChosenOne) {
     clearScreen()
     var textDiv = document.createElement("div")
     textDiv.style.textAlign = 'center'
-    if (maxNumberOfPalpa16Trials !== len) {
+    if (maxNumberOfPalpa16Trials-2 !== len) { // -2 to omit practice
       var warn_p = document.createElement("p")
       var warn_txt = document.createTextNode("Warning! The number of trials in the data file does not match the total number of trials for this test")
       warn_p.appendChild(warn_txt)
@@ -892,7 +894,7 @@ function analyzeSelectedFile(theChosenOne) {
     clearScreen()
     var textDiv = document.createElement("div")
     textDiv.style.textAlign = 'center'
-    if (maxNumberOfPalpa17Trials !== len) {
+    if (maxNumberOfPalpa17Trials-2 !== len) { // -2 to omit practice
       var warn_p = document.createElement("p")
       var warn_txt = document.createTextNode("Warning! The number of trials in the data file does not match the total number of trials for this test")
       warn_p.appendChild(warn_txt)
@@ -1587,14 +1589,18 @@ function updateKeys() {
     }
   } else if (keys.letterKeys.indexOf(keys.key) > -1) {
     if (assessment === 'palpa16') {
-      palpa16Result = checkPalpa16Accuracy()
-      appendPalpa16TrialDataToFile(palpa16FileToSave, [subjID, sessID, assessment, palpa16Trials[t].practice.trim(), palpa16Trials[t].name.trim(), palpa16Trials[t].name.charAt(0), palpa16Trials[t].wordOrNot.trim(), keys.key, keys.rt, palpa16Result.acc, palpa16Result.errorType])
+      if(isPalpa16PracticeTrial == 0) {
+        palpa16Result = checkPalpa16Accuracy()
+        appendPalpa16TrialDataToFile(palpa16FileToSave, [subjID, sessID, assessment, palpa16Trials[t].practice.trim(), palpa16Trials[t].name.trim(), palpa16Trials[t].name.charAt(0), palpa16Trials[t].wordOrNot.trim(), keys.key, keys.rt, palpa16Result.acc, palpa16Result.errorType])
+      }
       clearScreen()
       itiTimeOutID = setTimeout(function() {showNextPalpa16Trial()}, iti)
       //showNextPalpa16Trial()
     } else if (assessment === 'palpa17') {
-      palpa17Result = checkPalpa17Accuracy()
-      appendPalpa17TrialDataToFile(palpa17FileToSave, [subjID, sessID, assessment, palpa17Trials[t].practice.trim(), palpa17Trials[t].name.trim(), palpa17Trials[t].correctChoice.trim(), palpa17Trials[t].wordOrNot.trim(), keys.key, keys.rt, palpa17Result.acc, palpa17Result.errorType])
+      if (isPalpa17PracticeTrial == 0) {
+        palpa17Result = checkPalpa17Accuracy()
+        appendPalpa17TrialDataToFile(palpa17FileToSave, [subjID, sessID, assessment, palpa17Trials[t].practice.trim(), palpa17Trials[t].name.trim(), palpa17Trials[t].correctChoice.trim(), palpa17Trials[t].wordOrNot.trim(), keys.key, keys.rt, palpa17Result.acc, palpa17Result.errorType])
+      }
       clearScreen()
       itiTimeOutID = setTimeout(function() {showNextPalpa17Trial()}, iti)
       //showNextPalpa17Trial()
@@ -1933,6 +1939,13 @@ function showNextPalpa16Trial() {
   closeNav()
   clearScreen()
   t += 1
+  if (t == 0){
+    isPalpa16PracticeTrial = 1
+  } else if (t == 1) {
+    isPalpa16PracticeTrial = 1
+  } else {
+    isPalpa16PracticeTrial = 0
+  }
   if (t > maxNumberOfPalpa16Trials-1) {
     clearScreen()
     clearAllTimeouts()
@@ -2002,6 +2015,13 @@ function showNextPalpa17Trial() {
   closeNav()
   clearScreen()
   t += 1
+  if (t == 0){
+    isPalpa17PracticeTrial = 1
+  } else if (t == 1) {
+    isPalpa17PracticeTrial = 1
+  } else {
+    isPalpa17PracticeTrial = 0
+  }
   if (t > maxNumberOfPalpa17Trials-1) {
     clearScreen()
     clearAllTimeouts()
