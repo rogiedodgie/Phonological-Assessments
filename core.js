@@ -1814,7 +1814,7 @@ function showNextPalpa8Trial() {
   if (t > maxNumberOfPalpa8Trials-1) {
     clearScreen()
     clearAllTimeouts()
-    openNav()
+    stopRecordingAndShowNav()
     t = maxNumberOfPalpa8Trials+1
     return false
   }
