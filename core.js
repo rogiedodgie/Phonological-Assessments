@@ -918,7 +918,7 @@ function analyzeSelectedFile(theChosenOne) {
     // errs voice
     var voice_p = document.createElement("p")
     var voice_txt = document.createTextNode("Score Voice: " + (30-numErrsVoice).toString())
-    words_p.appendChild(voice_txt)
+    voice_p.appendChild(voice_txt)
     textDiv.appendChild(voice_p)
     // errs manner
     var manner_p = document.createElement("p")
@@ -1964,11 +1964,11 @@ function showNextPalpa16Trial() {
   textDiv.style.textAlign = 'center'
   var p = document.createElement("p")
   p.style.fontSize = "60px"
-  var txt = document.createTextNode(palpa16Trials[t].letter1.trim().toUpperCase() + spaces
-  + palpa16Trials[t].letter2.trim().toUpperCase() + spaces
-  + palpa16Trials[t].letter3.trim().toUpperCase() + spaces
-  + palpa16Trials[t].letter4.trim().toUpperCase() + spaces
-  + palpa16Trials[t].letter5.trim().toUpperCase())
+  var txt = document.createTextNode(palpa16Trials[t].letter1.trim() + spaces
+  + palpa16Trials[t].letter2.trim() + spaces
+  + palpa16Trials[t].letter3.trim() + spaces
+  + palpa16Trials[t].letter4.trim() + spaces
+  + palpa16Trials[t].letter5.trim())
   p.appendChild(txt)
   textDiv.appendChild(p)
   content.appendChild(textDiv)
@@ -1996,11 +1996,11 @@ function showPreviousPalpa16Trial() {
   textDiv.style.textAlign = 'center'
   var p = document.createElement("p")
   p.style.fontSize = "50px"
-  var txt = document.createTextNode(palpa16Trials[t].letter1.trim().toUpperCase() + spaces
-  + palpa16Trials[t].letter2.trim().toUpperCase() + spaces
-  + palpa16Trials[t].letter3.trim().toUpperCase() + spaces
-  + palpa16Trials[t].letter4.trim().toUpperCase() + spaces
-  + palpa16Trials[t].letter5.trim().toUpperCase())
+  var txt = document.createTextNode(palpa16Trials[t].letter1.trim() + spaces
+  + palpa16Trials[t].letter2.trim() + spaces
+  + palpa16Trials[t].letter3.trim() + spaces
+  + palpa16Trials[t].letter4.trim() + spaces
+  + palpa16Trials[t].letter5.trim())
   p.appendChild(txt)
   textDiv.appendChild(p)
   content.appendChild(textDiv)
@@ -2039,11 +2039,11 @@ function showNextPalpa17Trial() {
   textDiv.style.textAlign = 'center'
   var p = document.createElement("p")
   p.style.fontSize = "60px"
-  var txt = document.createTextNode(palpa17Trials[t].letter1.trim().toUpperCase() + spaces
-  + palpa17Trials[t].letter2.trim().toUpperCase() + spaces
-  + palpa17Trials[t].letter3.trim().toUpperCase() + spaces
-  + palpa17Trials[t].letter4.trim().toUpperCase() + spaces
-  + palpa17Trials[t].letter5.trim().toUpperCase())
+  var txt = document.createTextNode(palpa17Trials[t].letter1.trim() + spaces
+  + palpa17Trials[t].letter2.trim() + spaces
+  + palpa17Trials[t].letter3.trim() + spaces
+  + palpa17Trials[t].letter4.trim() + spaces
+  + palpa17Trials[t].letter5.trim())
   p.appendChild(txt)
   textDiv.appendChild(p)
   content.appendChild(textDiv)

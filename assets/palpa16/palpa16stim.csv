@@ -21,7 +21,7 @@ beginTime,endTime,name,practice,wordOrNot,letter1,letter2,letter3,letter4,letter
 51.344286,52.255233,toad,0,1,c,g,t,d,f
 53.390959,54.14811,jug,0,1,ch,i,d,j,t
 55.354819,56.076478,marf,0,0,n,m,u,l,w
-57.295018,58.395252,zeal,0,1,z,f,d,x,s
+57.295018,58.395252,zeal,0,0,z,f,d,x,s
 64.204018,65.245101,niz,0,0,u,d,t,m,n
 65.694659,66.546453,cap,0,1,t,g,e,c,m
 67.19713,68.451161,need,0,1,d,n,b,u,m
@@ -38,7 +38,7 @@ beginTime,endTime,name,practice,wordOrNot,letter1,letter2,letter3,letter4,letter
 90.479516,91.343141,lov,0,0,l,m,n,i,r
 92.265918,93.070391,dab,0,1,b,d,q,l,t
 94.075982,94.785811,fail,0,1,s,l,v,f,h
-95.625775,96.607705,sari,0,0,z,f,v,e,s
+95.625775,96.607705,sari,0,1,z,f,v,e,s
 98.192989,99.068445,pack,0,1,q,c,s,p,b
 99.872917,100.641899,kep,0,0,g,t,k,h,d
 104.723414,105.6107,road,0,1,r,i,n,l,m
