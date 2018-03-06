@@ -127,6 +127,8 @@ var palpa15DataFileHeader = ['subj', 'session', 'assessment', 'trial', 'conditio
 var palpa16DataFileHeader = ['subj', 'session', 'assessment', 'practice', 'trial', 'target', 'wordOrNot', 'keyPressed', 'reactionTime', 'accuracy', 'errorType', os.EOL]
 var palpa17DataFileHeader = ['subj', 'session', 'assessment', 'practice', 'trial', 'target', 'wordOrNot', 'keyPressed', 'reactionTime', 'accuracy', 'errorType', os.EOL]
 var palpa16ErrorLookupTable = [
+  [['','','',''], ['','','','']],
+  [['','','',''], ['','','','']],
   [['d','p','b','r'],['v','p','d','c']],
   [['d','m','t','u'],['m','p','d','c']],
   [['l','w','m','f'],['p','m','d','c']],
@@ -174,6 +176,8 @@ var palpa16ErrorLookupTable = [
   [['m','d','p','u'],['p','m','d','c']]
 ]
 palpa17ErrorLookupTable = [
+  [['','','',''], ['','','','']],
+  [['','','',''], ['','','','']],
   [['p','m','t','q'],['v','m','d','c']],
   [['d','p','l','f'],['v','p','d','c']],
   [['f','z','s','u'],['v','p','d','c']],
@@ -1380,7 +1384,7 @@ function checkPalpa15Accuracy() {
 
 
 function checkPalpa16Accuracy() {
-  console.log("t is: ", t)
+console.log("t is: ", t)
  letters = [palpa16Trials[t].letter1.trim(), palpa16Trials[t].letter2.trim(), palpa16Trials[t].letter3.trim(), palpa16Trials[t].letter4.trim(), palpa16Trials[t].letter5.trim()]
  correctChoice = palpa16Trials[t].name.charAt(0) // first character is the target
  subjChoice = keys.key
