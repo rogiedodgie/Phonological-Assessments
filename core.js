@@ -673,17 +673,18 @@ function analyzeSelectedFile(theChosenOne) {
     manner_p.appendChild(manner_txt)
     textDiv.appendChild(manner_p)
 
+    // low freq
+    var low_p = document.createElement("p")
+    var low_txt = document.createTextNode("Score Low Freq: " + scoreLow.toString())
+    low_p.appendChild(low_txt)
+    textDiv.appendChild(low_p)
+
     // high freq
     var high_p = document.createElement("p")
     var high_txt = document.createTextNode("Score High Freq: " + scoreHigh.toString())
     high_p.appendChild(high_txt)
     textDiv.appendChild(high_p)
 
-    // low freq
-    var low_p = document.createElement("p")
-    var low_txt = document.createTextNode("Score Low Freq: " + scoreLow.toString())
-    low_p.appendChild(low_txt)
-    textDiv.appendChild(low_p)
     content.appendChild(textDiv)
 
   } else if (filePath.search('palpa14_') > -1) {
@@ -2076,11 +2077,11 @@ function showPreviousPalpa17Trial() {
   textDiv.style.textAlign = 'center'
   var p = document.createElement("p")
   p.style.fontSize = "60px"
-  var txt = document.createTextNode(palpa17Trials[t].letter1.trim().toUpperCase() + spaces
-  + palpa17Trials[t].letter2.trim().toUpperCase() + spaces
-  + palpa17Trials[t].letter3.trim().toUpperCase() + spaces
-  + palpa17Trials[t].letter4.trim().toUpperCase() + spaces
-  + palpa17Trials[t].letter5.trim().toUpperCase())
+  var txt = document.createTextNode(palpa17Trials[t].letter1.trim() + spaces
+  + palpa17Trials[t].letter2.trim() + spaces
+  + palpa17Trials[t].letter3.trim() + spaces
+  + palpa17Trials[t].letter4.trim() + spaces
+  + palpa17Trials[t].letter5.trim())
   p.appendChild(txt)
   textDiv.appendChild(p)
   content.appendChild(textDiv)
